@@ -1,0 +1,56 @@
+<mat-grid-list cols="1" rowHeight="100px" xmlns="http://www.w3.org/1999/html">
+<mat-grid-tile [colspan]="1"[rowspan]="5">
+  <div *ngIf="pokemonDataLoaded" class="parent">
+    <div class="screen">
+      <img src="../../assets/images/screen.png"  />
+    </div>
+
+    <span class="enemy-pokemon-text">
+      {{enemyPokemonData.name}}
+    </span>
+    <div class="enemy-pokemon-health-bar">
+      <mat-progress-bar [value]="getOwnPokemonCurrentHpAsPercentage()"></mat-progress-bar>
+    </div>
+
+    <span class="own-pokemon-text">
+      {{ownPokemonData.name}}
+    </span>
+    <div class="own-pokemon-health-bar">
+      <mat-progress-bar value="40"></mat-progress-bar>
+    </div>
+
+    <!--
+        <div class="left-button-1">
+
+          <button mat-raised-button>Growl</button>
+        </div>
+
+        <div class="left-button-2">
+          <button mat-raised-button>Growl</button>
+        </div>
+
+        <div class="right-button-1">
+          <button mat-raised-button>Razor <br />Leaf</button>
+        </div>
+
+        <div class="right-button-2">
+          <button mat-raised-button>Solar <br/> Beam</button>
+        </div>
+        -->
+    <div class="enemy-pokemon-sprite">
+
+      <img [src]="this.ownPokemonData.frontSpriteUrl" width="120" height="120" >
+    </div>
+
+    <div class="own-pokemon-sprite">
+
+      <img [src]="this.enemyPokemonData.backSpriteUrl" width="160" height="160" >
+    </div>
+
+    <div class="text-box">
+      <span style="font-size: 10px">{{this.text}}</span>
+    </div>
+  </div>
+
+</mat-grid-tile>
+</mat-grid-list>

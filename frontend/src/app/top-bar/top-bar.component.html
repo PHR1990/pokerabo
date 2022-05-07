@@ -1,0 +1,28 @@
+
+    <mat-grid-list class="primaryColor" cols="5" rowHeight="30px">
+
+      <mat-grid-tile [colspan]="5"[rowspan]="8">
+        <img src="../../assets/images/banner.png" width="500" height="250" />
+      </mat-grid-tile>
+
+      <mat-grid-tile [colspan]="5"[rowspan]="1"></mat-grid-tile>
+
+      <mat-grid-tile [colspan]="5"[rowspan]="1">
+        <button mat-button routerLink="/home">
+          Home
+        </button>
+
+        <button mat-button routerLink="/simulate">
+          Simulate
+        </button>
+
+        <button mat-button routerLink="/faq">
+          FAQ
+        </button>
+
+      </mat-grid-tile>
+      <mat-grid-tile [colspan]="5"[rowspan]="1">
+      </mat-grid-tile>
+
+    </mat-grid-list>
+
