@@ -17,34 +17,55 @@ export class SimulateComponent implements OnInit, OnDestroy {
   ownPokemonData: Pokemon;
 
   text;
-
+/*
+this.pokemonService.executeTurn().then(res => {
+      console.log(res);
+    });
+ */
   constructor(private pokemonService: PokemonService) { }
   ngOnInit(): void {
     this.timeInterval = interval(1000)
       .pipe(
         startWith(0),
-        switchMap(() => this.pokemonService.getPokemon('charmander')))
+        switchMap(() => this.pokemonService.executeTurn()))
       .subscribe(res => {
         if (!this.ownPokemonData || this.ownPokemonData.currentHp <= 0) {
           return;
         }
-        this.ownPokemonData.currentHp -= 1;
+        console.log('turn data', res);
+        for (const x in res.actions) {
+          this.text = res.actions[x].text;
+        }
+        this.pokemonService.getOwnPokemon().then(pokeRes => {
+          this.ownPokemonData.currentHp = pokeRes.currentHp;
+        });
+        this.pokemonService.getEnemyPokemon().then(pokeRes => {
+          this.enemyPokemonData.currentHp = pokeRes.currentHp;
+        });
       }, err => console.log('error', err));
 
-
-
-    this.pokemonService.getPokemon('charmander')
+    this.pokemonService.chooseOwnPokemon('blastoise')
       .then(res => {
         this.ownPokemonData = res;
-        this.pokemonService.getPokemon('squirtle').then(enemy => {
+        this.pokemonService.chooseEnemyPokemon('charizard').then(enemy => {
           this.enemyPokemonData = enemy;
           this.text = enemy.name + ' wants to battle!';
           this.pokemonDataLoaded = true;
-          console.log('own', this.ownPokemonData);
-          console.log('enemy', this.enemyPokemonData);
         });
 
     });
+    /*
+    this.pokemonService.executeTurn().then(res => {
+      console.log(res);
+    });
+     */
+  }
+  getEnemyPokemonCurrentHpAsPercentage(): number {
+    if (!this.enemyPokemonData) {
+      return 0;
+    }
+    const percentage = (this.enemyPokemonData.currentHp * 100) / this.enemyPokemonData.maxHp;
+    return percentage;
   }
   getOwnPokemonCurrentHpAsPercentage(): number {
     if (!this.ownPokemonData) {

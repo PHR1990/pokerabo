@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class StatDtoWrapper {
-    private String baseStat;
+    private int baseStat;
     private StatDto stat;
 }

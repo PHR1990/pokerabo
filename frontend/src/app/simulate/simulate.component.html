@@ -16,35 +16,17 @@
       {{ownPokemonData.name}}
     </span>
     <div class="own-pokemon-health-bar">
-      <mat-progress-bar value="40"></mat-progress-bar>
+      <mat-progress-bar [value]="getEnemyPokemonCurrentHpAsPercentage()"></mat-progress-bar>
     </div>
 
-    <!--
-        <div class="left-button-1">
-
-          <button mat-raised-button>Growl</button>
-        </div>
-
-        <div class="left-button-2">
-          <button mat-raised-button>Growl</button>
-        </div>
-
-        <div class="right-button-1">
-          <button mat-raised-button>Razor <br />Leaf</button>
-        </div>
-
-        <div class="right-button-2">
-          <button mat-raised-button>Solar <br/> Beam</button>
-        </div>
-        -->
     <div class="enemy-pokemon-sprite">
 
-      <img [src]="this.ownPokemonData.frontSpriteUrl" width="120" height="120" >
+      <img [src]="this.ownPokemonData.frontSpriteUrl" width="110" height="110" >
     </div>
 
     <div class="own-pokemon-sprite">
 
-      <img [src]="this.enemyPokemonData.backSpriteUrl" width="160" height="160" >
+      <img [src]="this.enemyPokemonData.backSpriteUrl" width="140" height="140" >
     </div>
 
     <div class="text-box">

@@ -29,3 +29,11 @@ export enum Effect {
 export enum Type {
   None = 0, Fire = 1, Water = 2, Grass = 3
 }
+
+export interface TurnInformation {
+  actions: TurnAction;
+}
+
+export interface TurnAction {
+  text: string;
+}
