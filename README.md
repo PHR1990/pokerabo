@@ -1,7 +1,7 @@
 # Pokerabo
 This is a project to be used for rabobank candidates. (and an experiment for us to see how to better interview candidates)
 
-## Instalation
+## Installation
 ### Backend
 The backend only requires maven (and JDK), but it is also recommended to use a lombock plugin
 
@@ -27,7 +27,7 @@ The project is a simulation of a pokemon battle between two pokemons.
 A user would choose between 2 pokemons and their levels and press next turn to simulate turn by turn.
 
 The backend will read pokemon data from an external API (https://pokeapi.co/) and build the battle information. 
-gahtered information from the external API must be stored to avoid calling them unecessary (to be polite using their public API).
+gathered information from the external API must be stored to avoid calling them unecessary (to be polite using their public API).
 
 When turns are completed the backend will maintain the state of the battle (only a single user is supported) and the backend sends the instructions to be
 processed by the frontend to display things in order (texts, damage updates, possibly animations, etc)
