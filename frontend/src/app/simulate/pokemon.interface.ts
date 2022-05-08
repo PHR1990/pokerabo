@@ -31,9 +31,20 @@ export enum Type {
 }
 
 export interface TurnInformation {
-  actions: TurnAction;
+  actions: TurnAction[];
 }
 
 export interface TurnAction {
   text: string;
+  damage: number;
+  type: TurnActionType;
 }
+
+export enum TurnActionType {
+  TEXT_ONLY = 'TEXT_ONLY',
+  DAMAGE_ANIMATION_AGAINST_OWN = 'DAMAGE_ANIMATION_AGAINST_OWN',
+  DAMAGE_ANIMATION_AGAINST_ENEMY = 'DAMAGE_ANIMATION_AGAINST_ENEMY' ,
+  STAT_EFFECT = 'STAT_EFFECT'
+}
+
+

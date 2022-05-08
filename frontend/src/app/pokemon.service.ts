@@ -21,8 +21,8 @@ export class PokemonService {
         return res as Pokemon;
       });
   }
-  chooseOwnPokemon(pokemonName: string): Promise<Pokemon> {
-    return fetch('http://localhost:8080/api/pokemon/own-pokemon/' + pokemonName, {method: 'POST'})
+  chooseOwnPokemon(pokemonName: string, level: number = 5): Promise<Pokemon> {
+    return fetch('http://localhost:8080/api/pokemon/own-pokemon/' + pokemonName + '/level/' + level, {method: 'POST'})
       .then(res => res.json())
       .then(res => {
       console.log('Chose own pokemon', res);
@@ -30,11 +30,10 @@ export class PokemonService {
     });
   }
 
-  chooseEnemyPokemon(pokemonName: string): Promise<Pokemon> {
-    return fetch('http://localhost:8080/api/pokemon/enemy-pokemon/' + pokemonName, {method: 'POST'})
+  chooseEnemyPokemon(pokemonName: string, level: number = 5): Promise<Pokemon> {
+    return fetch('http://localhost:8080/api/pokemon/enemy-pokemon/' + pokemonName + '/level/' + level, {method: 'POST'})
       .then(res => res.json())
       .then(res => {
-        console.log('Chose enemy pokemon', res);
         return res as Pokemon;
       });
   }
@@ -43,7 +42,6 @@ export class PokemonService {
     return fetch('http://localhost:8080/api/pokemon/execute-turn')
       .then(res => res.json())
       .then(res => {
-        console.log('Turn executed', res);
         return res as TurnInformation;
       });
   }

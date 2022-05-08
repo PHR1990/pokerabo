@@ -12,10 +12,75 @@
   left: 0;
 }
 
+.left-side-left-arrow-button {
+  position: absolute;
+  top: 250px;
+  left: 150px;
+  transform: scale(0.60)
+}
+.left-side-up-arrow-button {
+  position: absolute;
+  top: 220px;
+  left: 190px;
+  transform: scale(0.60)
+}
+.left-side-right-arrow-button {
+  position: absolute;
+  top: 250px;
+  left: 230px;
+  transform: scale(0.60)
+}
+.left-side-down-arrow-button {
+  position: absolute;
+  top: 280px;
+  left: 190px;
+  transform: scale(0.60)
+}
+
+.right-side-left-arrow-button {
+  position: absolute;
+  top: 250px;
+  left: 695px;
+  transform: scale(0.60)
+}
+.right-side-up-arrow-button {
+  position: absolute;
+  top: 220px;
+  left: 735px;
+  transform: scale(0.60)
+}
+.right-side-right-arrow-button {
+  position: absolute;
+  top: 250px;
+  left: 775px;
+  transform: scale(0.60)
+}
+.right-side-down-arrow-button {
+  position: absolute;
+  top: 280px;
+  left: 735px;
+  transform: scale(0.60)
+}
+
+
+.next-turn-button {
+  position: absolute;
+  top: 470px;
+  left: 390px;
+  transform: scale(0.80)
+}
+
+.refresh-button {
+  position: absolute;
+  top: 470px;
+  left: 410px;
+  transform: scale(0.80)
+}
+
 .enemy-pokemon-text {
   font-size: 12px;
   position: absolute;
-  top: 180px;
+  top: 170px;
   left: 380px;
 }
 
@@ -29,14 +94,14 @@
 
 .enemy-pokemon-sprite {
   position: absolute;
-  top: 150px;
+  top: 170px;
   left: 500px;
 }
 
 .own-pokemon-text {
   font-size: 12px;
   position: absolute;
-  top: 250px;
+  top: 270px;
   left: 500px;
 }
 
@@ -44,7 +109,7 @@
   height: 10px;
   width: 100px;
   position: absolute;
-  top: 280px;
+  top: 310px;
   left: 500px;
 }
 
@@ -55,8 +120,7 @@
 }
 
 .text-box {
-
   position: absolute;
-  top: 320px;
-  left: 355px;
+  top: 330px;
+  left: 370px;
 }

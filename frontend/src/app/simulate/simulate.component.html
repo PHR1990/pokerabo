@@ -6,33 +6,101 @@
     </div>
 
     <span class="enemy-pokemon-text">
-      {{enemyPokemonData.name}}
+      {{enemyPokemonData.name}}<br /> LV {{this.enemyPokemonLevel}}
     </span>
     <div class="enemy-pokemon-health-bar">
-      <mat-progress-bar [value]="getOwnPokemonCurrentHpAsPercentage()"></mat-progress-bar>
-    </div>
-
-    <span class="own-pokemon-text">
-      {{ownPokemonData.name}}
-    </span>
-    <div class="own-pokemon-health-bar">
       <mat-progress-bar [value]="getEnemyPokemonCurrentHpAsPercentage()"></mat-progress-bar>
     </div>
 
-    <div class="enemy-pokemon-sprite">
-
-      <img [src]="this.ownPokemonData.frontSpriteUrl" width="110" height="110" >
+    <span class="own-pokemon-text">
+      {{ownPokemonData.name}} <br /> LV {{this.ownPokemonLevel}}
+    </span>
+    <div class="own-pokemon-health-bar">
+      <mat-progress-bar [value]="getOwnPokemonCurrentHpAsPercentage()"></mat-progress-bar>
     </div>
 
-    <div class="own-pokemon-sprite">
+    <!-- Left side controls -->
+    <span class="left-side-level-label">LVL</span>
 
-      <img [src]="this.enemyPokemonData.backSpriteUrl" width="140" height="140" >
+    <div class="left-side-left-arrow-button">
+      <button mat-raised-button>
+        <mat-icon aria-hidden="false">west</mat-icon>
+      </button>
     </div>
 
-    <div class="text-box">
-      <span style="font-size: 10px">{{this.text}}</span>
+    <div class="left-side-up-arrow-button">
+      <button (click)="increaseOwnPokemonLevel()" mat-raised-button>
+        <mat-icon aria-hidden="false">north</mat-icon>
+      </button>
     </div>
-  </div>
 
-</mat-grid-tile>
+    <div class="left-side-right-arrow-button">
+      <button (click)="selectNextOwnPokemon()" mat-raised-button>
+        <mat-icon aria-hidden="false">east</mat-icon>
+      </button>
+    </div>
+
+    <div class="left-side-down-arrow-button">
+      <button (click)="decreaseOwnPokemonLevel()" mat-raised-button>
+        <mat-icon aria-hidden="false">south</mat-icon>
+      </button>
+    </div>
+
+    <!-- Right side controls -->
+    <div class="right-side-left-arrow-button">
+      <button mat-raised-button>
+        <mat-icon aria-hidden="false">west</mat-icon>
+      </button>
+    </div>
+
+    <div class="right-side-up-arrow-button">
+      <button (click)="increaseEnemyPokemonLevel()" mat-raised-button>
+        <mat-icon aria-hidden="false">north</mat-icon>
+      </button>
+    </div>
+
+    <div class="right-side-right-arrow-button">
+      <button (click)="selectNextEnemyPokemon()" mat-raised-button>
+        <mat-icon aria-hidden="false">east</mat-icon>
+      </button>
+    </div>
+
+    <div class="right-side-down-arrow-button">
+      <button (click)="decreaseEnemyPokemonLevel()" mat-raised-button>
+        <mat-icon aria-hidden="false">south</mat-icon>
+      </button>
+    </div>
+
+
+    <!-- Simulate next turn -->
+    <div *ngIf="!restartBattle" class="next-turn-button">
+      <button mat-raised-button
+      (click)="executeTurn()">
+        <span >next turn</span>
+      </button>
+    </div>
+    <div *ngIf="restartBattle"class="refresh-button">
+      <button mat-raised-button
+              (click)="executeTurn()">
+
+        <span>refresh</span>
+      </button>
+    </div>
+
+      <div class="enemy-pokemon-sprite">
+
+        <img [src]="this.enemyPokemonData.frontSpriteUrl" width="100" height="100" >
+      </div>
+
+      <div class="own-pokemon-sprite">
+
+        <img [src]="this.ownPokemonData.backSpriteUrl" width="130" height="130" >
+      </div>
+
+      <div class="text-box">
+        <span style="font-size: 10px">{{this.text}}</span>
+      </div>
+    </div>
+
+  </mat-grid-tile>
 </mat-grid-list>
