@@ -1,3 +1,7 @@
+<img src="https://github.com/PHR1990/pokerabo/blob/main/gitbanner.png" 
+     style="width: 500px; height: auto;"/>
+
+
 # Pokerabo
 This is a project to be used for rabobank candidates. (and an experiment for us to see how to better interview candidates)
 
