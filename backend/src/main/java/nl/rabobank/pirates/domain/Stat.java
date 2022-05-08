@@ -11,6 +11,8 @@ public enum Stat {
     SPECIAL_ATTACK("special-attack"),
     SPECIAL_DEFENSE("special-defense"),
     SPEED("speed"),
+    ACCURACY("accuracy"),
+    EVASION("evasion"),
     HP("hp");
 
     private final String label;

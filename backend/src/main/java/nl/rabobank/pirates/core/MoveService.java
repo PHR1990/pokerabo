@@ -15,6 +15,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * TODO Implement Accuracy to calculations
+ */
 @Component
 public class MoveService {
 
@@ -28,7 +31,8 @@ public class MoveService {
     private static final String RED_BLUE_VERSION_GROUP = "red-blue";
 
     private List<String> prohibitedMoves
-            = Arrays.asList("poison-powder", "leech-seed", "rage", "fury-swipes","double-kick", "comet-punch", "focus-energy");
+            = Arrays.asList("poison-powder", "leech-seed", "rage", "fury-swipes","double-kick", "comet-punch", "focus-energy",
+            "quick-attack", "thunder-shock", "tackle");
     // Implement status effects
     // Create a move set builder, find moves that would make sense for a particular pokemon.
 
