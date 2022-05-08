@@ -24,84 +24,71 @@ public class BattleService {
     public TurnInformation executeTurn() {
         if (currentOwnPokemon == null || currentEnemyPokemon == null) return null;
         // Pokemons must have been set before
-        return executeTurn(currentOwnPokemon, currentEnemyPokemon);
-    }
-    private TurnInformation executeTurn(Pokemon ownPokemon, Pokemon enemyPokemon) {
+
         List<TurnAction> actions = new ArrayList<>();
         
-        int ownPokemonMoveIndex = getRandomValue(0, ownPokemon.getMoves().size());
-        int enemyPokemonMoveIndex = getRandomValue(0, enemyPokemon.getMoves().size());
-        Move ownPokemonMove = ownPokemon.getMoves().get(ownPokemonMoveIndex);
-        Move enemyPokemonMove = enemyPokemon.getMoves().get(enemyPokemonMoveIndex);
+        int ownPokemonMoveIndex = getRandomValue(0, currentOwnPokemon.getMoves().size());
+        int enemyPokemonMoveIndex = getRandomValue(0, currentEnemyPokemon.getMoves().size());
+        Move ownPokemonMove = currentOwnPokemon.getMoves().get(ownPokemonMoveIndex);
+        Move enemyPokemonMove = currentEnemyPokemon.getMoves().get(enemyPokemonMoveIndex);
 
         // Decide who goes first
         boolean ownPokemonGoesFirst = false;
-        if (ownPokemon.getStatAmount(Stat.SPEED) > enemyPokemon.getStatAmount(Stat.SPEED)) {
+        if (currentOwnPokemon.getStatAmount(Stat.SPEED) > currentEnemyPokemon.getStatAmount(Stat.SPEED)) {
             ownPokemonGoesFirst = true;
         }
-        int damageAgainstEnemyPokemon = calculateDamage(ownPokemon.getLevel(), ownPokemonMove.getPower(), ownPokemon.getStatAmount(Stat.ATTACK), enemyPokemon.getStatAmount(Stat.DEFENSE));
-        int damageAgainstOwnPokemon = calculateDamage(enemyPokemon.getLevel(), enemyPokemonMove.getPower(), enemyPokemon.getStatAmount(Stat.ATTACK), ownPokemon.getStatAmount(Stat.DEFENSE));
+
         if (ownPokemonGoesFirst) {
-            // Execute own move against foe
-            // calculate damage of own pokemon
-            actions.add(TurnAction.builder()
-                    .text(buildPokemonUsedMove(ownPokemon.getName(), ownPokemonMove.getName(), false))
-                    .type(TurnActionType.TEXT_ONLY)
-                    .build());
 
-            enemyPokemon.dealDamage(damageAgainstEnemyPokemon);
-            actions.add(TurnAction.builder()
-                    .type(TurnActionType.DAMAGE_ANIMATION_AGAINST_ENEMY)
-                    .damage(damageAgainstEnemyPokemon)
-                    .build());
-            // Execute enemy turn
-            // Calculate their damage
-            actions.add(TurnAction.builder()
-                    .text(buildPokemonUsedMove(enemyPokemon.getName(), enemyPokemonMove.getName(), true))
-                    .type(TurnActionType.TEXT_ONLY)
-                    .build());
+            processDamageOwnPokemonAgainstEnemyAndPutIntoActions(actions, ownPokemonMove);
 
-            ownPokemon.dealDamage(damageAgainstOwnPokemon);
-
-            actions.add(TurnAction.builder()
-                    .type(TurnActionType.DAMAGE_ANIMATION_AGAINST_OWN)
-                    .damage(damageAgainstOwnPokemon)
-                    .build());
+            processDamageEnemyPokemonAgainstOwnAndPutIntoActions(actions, enemyPokemonMove);
         } else {
-            // Execute enemy turn
-            // Calculate their damage
-            actions.add(TurnAction.builder()
-                    .text(buildPokemonUsedMove(enemyPokemon.getName(), enemyPokemonMove.getName(), true))
-                    .type(TurnActionType.TEXT_ONLY)
-                    .build());
 
-            ownPokemon.dealDamage(damageAgainstOwnPokemon);
+            processDamageEnemyPokemonAgainstOwnAndPutIntoActions(actions, enemyPokemonMove);
 
-            actions.add(TurnAction.builder()
-                    .type(TurnActionType.DAMAGE_ANIMATION_AGAINST_OWN)
-                    .damage(damageAgainstOwnPokemon)
-                    .build());
-
-            // Execute own move against foe
-            // calculate damage of own pokemon
-            actions.add(TurnAction.builder()
-                    .text(buildPokemonUsedMove(ownPokemon.getName(), ownPokemonMove.getName(), false))
-                    .type(TurnActionType.TEXT_ONLY)
-                    .build());
-
-            enemyPokemon.dealDamage(damageAgainstEnemyPokemon);
-            actions.add(TurnAction.builder()
-                    .type(TurnActionType.DAMAGE_ANIMATION_AGAINST_ENEMY)
-                    .damage(damageAgainstEnemyPokemon)
-                    .build());
+            processDamageOwnPokemonAgainstEnemyAndPutIntoActions(actions, ownPokemonMove);
         }
 
         actions.add(TurnAction.builder()
-                .text("What will " + ownPokemon.getName().toUpperCase() + " do?")
+                .text("What will " + currentOwnPokemon.getName().toUpperCase() + " do?")
                 .type(TurnActionType.TEXT_ONLY)
                 .build());
 
         return TurnInformation.builder().actions(actions).build();
+    }
+
+    private void processDamageEnemyPokemonAgainstOwnAndPutIntoActions(final List<TurnAction> actions, Move pokemonMove) {
+
+        int damageAgainstOwnPokemon = calculateDamage(currentEnemyPokemon.getLevel(), pokemonMove.getPower(), currentEnemyPokemon.getStatAmount(Stat.ATTACK), currentOwnPokemon.getStatAmount(Stat.DEFENSE));
+
+        actions.add(TurnAction.builder()
+                .text(buildPokemonUsedMove(currentEnemyPokemon.getName(), pokemonMove.getName(), true))
+                .type(TurnActionType.TEXT_ONLY)
+                .build());
+
+        currentOwnPokemon.dealDamage(damageAgainstOwnPokemon);
+
+        actions.add(TurnAction.builder()
+                .type(TurnActionType.DAMAGE_ANIMATION_AGAINST_OWN)
+                .damage(damageAgainstOwnPokemon)
+                .build());
+    }
+
+    private void processDamageOwnPokemonAgainstEnemyAndPutIntoActions(final List<TurnAction> actions, Move pokemonMove) {
+        int damageAgainstEnemyPokemon = calculateDamage(currentOwnPokemon.getLevel(), pokemonMove.getPower()
+                , currentOwnPokemon.getStatAmount(Stat.ATTACK), currentEnemyPokemon.getStatAmount(Stat.DEFENSE));
+        // Own pokemon
+        actions.add(TurnAction.builder()
+                .text(buildPokemonUsedMove(currentOwnPokemon.getName(), pokemonMove.getName(), false))
+                .type(TurnActionType.TEXT_ONLY)
+                .build());
+
+        currentEnemyPokemon.dealDamage(damageAgainstEnemyPokemon);
+        actions.add(TurnAction.builder()
+                .type(TurnActionType.DAMAGE_ANIMATION_AGAINST_ENEMY)
+                .damage(damageAgainstEnemyPokemon)
+                .build());
     }
 
     private int calculateDamage(int level, int movePower, int attack, int defense) {

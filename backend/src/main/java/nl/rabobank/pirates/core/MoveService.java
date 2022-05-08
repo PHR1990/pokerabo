@@ -2,13 +2,12 @@ package nl.rabobank.pirates.core;
 
 import nl.rabobank.pirates.client.common.Type;
 import nl.rabobank.pirates.client.move.MoveDto;
+import nl.rabobank.pirates.client.move.StatChangeDto;
 import nl.rabobank.pirates.client.pokemon.PokemonDto;
 import nl.rabobank.pirates.client.pokemon.ThinMoveDto;
 import nl.rabobank.pirates.client.pokemon.ThinMoveWrapperDto;
 import nl.rabobank.pirates.client.pokemon.VersionGroupDetailsDto;
-import nl.rabobank.pirates.domain.DamageClass;
-import nl.rabobank.pirates.domain.Move;
-import nl.rabobank.pirates.domain.Target;
+import nl.rabobank.pirates.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,8 +28,7 @@ public class MoveService {
     private static final String RED_BLUE_VERSION_GROUP = "red-blue";
 
     private List<String> prohibitedMoves
-            = Arrays.asList("growl", "tail-whip", "poison-powder"
-            , "sand-attack", "leer", "leech-seed", "rage", "withdraw", "fury-swipes", "meditate", "agility"
+            = Arrays.asList("poison-powder", "leech-seed", "rage", "withdraw", "fury-swipes", "meditate", "agility"
     ,"double-kick", "comet-punch", "harden", "focus-energy");
     // Implement status effects
     // Create a move set builder, find moves that would make sense for a particular pokemon.
@@ -152,11 +150,18 @@ public class MoveService {
             move = move.toBuilder().damageClass(damageClass).build();
         }
 
-
         if (moveDto.getStatChanges() != null) {
-            // TODO add stat changes (it is a list of effects)
+            List<StatChange> statChanges = new ArrayList<>();
+            for (StatChangeDto statChangeDto : moveDto.getStatChanges()) {
+                statChanges.add(
+                        StatChange.builder().changeAmount(statChangeDto.getChange())
+                                .stat(Stat.valueOfLabel(statChangeDto.getStat().getName()))
+                                .build()
+                );
+            }
+            move = move.toBuilder().statChanges(statChanges).build();
         }
-        Type type = Type.NORMAL;
+        Type type = Type.NORMAL; // Using normal as a fallback to avoid weird exceptions
         switch(moveDto.getType().getName()) {
             case "normal":
                 type = Type.NORMAL;
@@ -172,6 +177,9 @@ public class MoveService {
                 break;
             case "grass":
                 type = Type.GRASS;
+                break;
+            case "poison":
+                type = Type.POISON;
                 break;
         }
 

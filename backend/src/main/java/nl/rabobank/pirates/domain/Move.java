@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import nl.rabobank.pirates.client.common.Type;
 
+import java.util.List;
+
 @Getter
 @Builder(toBuilder = true)
 public class Move {
@@ -14,7 +16,7 @@ public class Move {
     private Target target;
     private Type type;
     private DamageClass damageClass;
-    private Stat effectedStat;
+    private List<StatChange> statChanges;
 }
 
 
