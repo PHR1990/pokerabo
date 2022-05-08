@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class TurnAction {
     private TurnActionType type;
+    private int damage;
     private String text;
 
 }

@@ -20,10 +20,10 @@
     </div>
 
     <!-- Left side controls -->
-    <span class="left-side-level-label">LVL</span>
+    <span class="left-side-label">Own <br />Pokemon</span>
 
     <div class="left-side-left-arrow-button">
-      <button mat-raised-button>
+      <button (click)="selectPreviousOwnPokemon()" mat-raised-button>
         <mat-icon aria-hidden="false">west</mat-icon>
       </button>
     </div>
@@ -47,8 +47,10 @@
     </div>
 
     <!-- Right side controls -->
+    <span class="right-side-label">Enemy <br />Pokemon</span>
+
     <div class="right-side-left-arrow-button">
-      <button mat-raised-button>
+      <button (click)="selectPreviousEnemyPokemon()" mat-raised-button>
         <mat-icon aria-hidden="false">west</mat-icon>
       </button>
     </div>

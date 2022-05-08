@@ -36,16 +36,17 @@ public class PokemonService {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
-    public Pokemon setOwnPokemonByName(final String pokemonName) {
-        currentOwnPokemon = getPokemonByName(pokemonName);
+    public Pokemon selectOwnPokemonByName(final String pokemonName, final int level) {
+        currentOwnPokemon = getPokemonByName(pokemonName, level);
         return currentOwnPokemon;
     }
 
-    public Pokemon setEnemyPokemonByName(final String pokemonName) {
-        currentEnemyPokemon = getPokemonByName(pokemonName);
+    public Pokemon selectEnemyPokemonByName(final String pokemonName, int level) {
+        currentEnemyPokemon = getPokemonByName(pokemonName, level);
         return currentEnemyPokemon;
     }
-    public Pokemon getPokemonByName(final String pokemonName) {
+    public Pokemon getPokemonByName(final String pokemonName, int level) {
+        if (level == 0) level = 5;
         PokemonDto pokemonDto;
         if (pokemonStorage.containsKey(pokemonName)) {
             pokemonDto = pokemonStorage.get(pokemonName);
@@ -56,21 +57,22 @@ public class PokemonService {
         pokemonStorage.put(pokemonName, pokemonDto);
 
         return Pokemon.builder()
-                .name(pokemonDto.getName())
+                .name(pokemonDto.getName().toUpperCase())
                 .backSpriteUrl(pokemonDto.getSprites().getBackDefault())
                 .frontSpriteUrl(pokemonDto.getSprites().getFrontDefault())
-                .maxHp(calculateMaxHp(5, pokemonDto))
-                .currentHp(calculateMaxHp(5, pokemonDto))
-                .stats(convertAndCalculateToStatsAmount(pokemonDto.getStats()))
-                .moves(convertToMoves(getFourRandomMoves(5, pokemonDto)))
+                .maxHp(calculateMaxHp(level, pokemonDto))
+                .currentHp(calculateMaxHp(level, pokemonDto))
+                .stats(convertAndCalculateToStatsAmount(pokemonDto.getStats(), level))
+                .moves(convertToMoves(getFourRandomMoves(level, pokemonDto)))
+                .level(level)
                 .build();
     }
 
-    private List<StatAmount> convertAndCalculateToStatsAmount(List<StatDtoWrapper> statDtoWrapperList) {
+    private List<StatAmount> convertAndCalculateToStatsAmount(List<StatDtoWrapper> statDtoWrapperList, int level) {
         List<StatAmount> statAmountList = new ArrayList<>();
 
         for (StatDtoWrapper statDtoWrapper : statDtoWrapperList) {
-            int statAmount = calculateStat(5, statDtoWrapper.getBaseStat());
+            int statAmount = calculateStat(level, statDtoWrapper.getBaseStat());
             statAmountList.add(
                     StatAmount.builder()
                             .amount(statAmount)
@@ -240,8 +242,8 @@ public class PokemonService {
     private TurnInformation executeTurn(Pokemon ownPokemon, Pokemon enemyPokemon) {
         List<TurnAction> actions = new ArrayList<>();
         // each pokemon randomize their move choices
-        int ownPokemonMoveIndex = getRandomValue(0, ownPokemon.getMoves().size()-1);
-        int enemyPokemonMoveIndex = getRandomValue(0, enemyPokemon.getMoves().size()-1);
+        int ownPokemonMoveIndex = getRandomValue(0, ownPokemon.getMoves().size());
+        int enemyPokemonMoveIndex = getRandomValue(0, enemyPokemon.getMoves().size());
         Move ownPokemonMove = ownPokemon.getMoves().get(ownPokemonMoveIndex);
         Move enemyPokemonMove = enemyPokemon.getMoves().get(enemyPokemonMoveIndex);
 
@@ -250,7 +252,8 @@ public class PokemonService {
         if (ownPokemon.getStatAmount(Stat.SPEED) > enemyPokemon.getStatAmount(Stat.SPEED)) {
             ownPokemonGoesFirst = true;
         }
-
+        int damageAgainstEnemyPokemon = calculateDamage(ownPokemon.getLevel(), ownPokemonMove.getPower(), ownPokemon.getStatAmount(Stat.ATTACK), enemyPokemon.getStatAmount(Stat.DEFENSE));
+        int damageAgainstOwnPokemon = calculateDamage(enemyPokemon.getLevel(), enemyPokemonMove.getPower(), enemyPokemon.getStatAmount(Stat.ATTACK), ownPokemon.getStatAmount(Stat.DEFENSE));
         if (ownPokemonGoesFirst) {
             // Execute own move against foe
             // calculate damage of own pokemon
@@ -259,46 +262,50 @@ public class PokemonService {
                     .type(TurnActionType.TEXT_ONLY)
                     .build());
 
-            enemyPokemon.dealDamage(calculateDamage(5, ownPokemonMove.getPower(), ownPokemon.getStatAmount(Stat.ATTACK), enemyPokemon.getStatAmount(Stat.DEFENSE)));
+            enemyPokemon.dealDamage(damageAgainstEnemyPokemon);
             actions.add(TurnAction.builder()
-                    .type(TurnActionType.DAMAGE_ANIMATION_ENEMY)
+                    .type(TurnActionType.DAMAGE_ANIMATION_AGAINST_ENEMY)
+                    .damage(damageAgainstEnemyPokemon)
                     .build());
             // Execute enemy turn
             // Calculate their damage
             actions.add(TurnAction.builder()
-                    .text(buildPokemonUsedMove(ownPokemon.getName(), ownPokemonMove.getName(), true))
+                    .text(buildPokemonUsedMove(enemyPokemon.getName(), enemyPokemonMove.getName(), true))
                     .type(TurnActionType.TEXT_ONLY)
                     .build());
 
-            ownPokemon.dealDamage(calculateDamage(5, enemyPokemonMove.getPower(), enemyPokemon.getStatAmount(Stat.ATTACK), ownPokemon.getStatAmount(Stat.DEFENSE)));
+            ownPokemon.dealDamage(damageAgainstOwnPokemon);
 
             actions.add(TurnAction.builder()
-                    .type(TurnActionType.DAMAGE_ANIMATION_OWN)
+                    .type(TurnActionType.DAMAGE_ANIMATION_AGAINST_OWN)
+                    .damage(damageAgainstOwnPokemon)
                     .build());
         } else {
             // Execute enemy turn
             // Calculate their damage
             actions.add(TurnAction.builder()
-                    .text(buildPokemonUsedMove(ownPokemon.getName(), ownPokemonMove.getName(), true))
-                    .type(TurnActionType.TEXT_ONLY)
+                            .text(buildPokemonUsedMove(enemyPokemon.getName(), enemyPokemonMove.getName(), true))
+                            .type(TurnActionType.TEXT_ONLY)
                     .build());
 
-            ownPokemon.dealDamage(calculateDamage(5, enemyPokemonMove.getPower(), enemyPokemon.getStatAmount(Stat.ATTACK), ownPokemon.getStatAmount(Stat.DEFENSE)));
+            ownPokemon.dealDamage(damageAgainstOwnPokemon);
 
             actions.add(TurnAction.builder()
-                    .type(TurnActionType.DAMAGE_ANIMATION_OWN)
+                            .type(TurnActionType.DAMAGE_ANIMATION_AGAINST_OWN)
+                            .damage(damageAgainstOwnPokemon)
                     .build());
 
             // Execute own move against foe
             // calculate damage of own pokemon
             actions.add(TurnAction.builder()
-                    .text(buildPokemonUsedMove(ownPokemon.getName(), ownPokemonMove.getName(), false))
-                    .type(TurnActionType.TEXT_ONLY)
+                            .text(buildPokemonUsedMove(ownPokemon.getName(), ownPokemonMove.getName(), false))
+                            .type(TurnActionType.TEXT_ONLY)
                     .build());
 
-            enemyPokemon.dealDamage(calculateDamage(5, ownPokemonMove.getPower(), ownPokemon.getStatAmount(Stat.ATTACK), enemyPokemon.getStatAmount(Stat.DEFENSE)));
+            enemyPokemon.dealDamage(damageAgainstEnemyPokemon);
             actions.add(TurnAction.builder()
-                    .type(TurnActionType.DAMAGE_ANIMATION_ENEMY)
+                        .type(TurnActionType.DAMAGE_ANIMATION_AGAINST_ENEMY)
+                        .damage(damageAgainstEnemyPokemon)
                     .build());
         }
 
@@ -308,11 +315,10 @@ public class PokemonService {
                 .build());
 
         return TurnInformation.builder().actions(actions).build();
-
     }
 
-
     private int calculateDamage(int level, int movePower, int attack, int defense) {
+        if (movePower == 0) return 0;
         return Math.round(
                 ((((level * 2)/5 + 2) * movePower * attack/defense)/50) + 2
         );
@@ -322,8 +328,6 @@ public class PokemonService {
         String prefix = isFoe ? "Foe " : "";
         return prefix + pokemonName + " used " + moveName.toUpperCase();
     }
-
-
 
     private int getRandomValue(int rangeStart, int rangeEnd) {
         final Random random = new Random();

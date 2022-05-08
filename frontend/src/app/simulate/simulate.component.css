@@ -12,52 +12,66 @@
   left: 0;
 }
 
+.left-side-label {
+  position: absolute;
+  top: 200px;
+  left: 150px;
+  transform: scale(0.80)
+}
+
 .left-side-left-arrow-button {
   position: absolute;
-  top: 250px;
+  top: 285px;
   left: 150px;
   transform: scale(0.60)
 }
 .left-side-up-arrow-button {
   position: absolute;
-  top: 220px;
+  top: 255px;
   left: 190px;
   transform: scale(0.60)
 }
 .left-side-right-arrow-button {
   position: absolute;
-  top: 250px;
+  top: 285px;
   left: 230px;
   transform: scale(0.60)
 }
 .left-side-down-arrow-button {
   position: absolute;
-  top: 280px;
+  top: 315px;
   left: 190px;
   transform: scale(0.60)
 }
 
+.right-side-label {
+  position: absolute;
+  top: 200px;
+  left: 695px;
+  transform: scale(0.80)
+}
+
 .right-side-left-arrow-button {
   position: absolute;
-  top: 250px;
+  top: 285px;
   left: 695px;
   transform: scale(0.60)
 }
 .right-side-up-arrow-button {
   position: absolute;
-  top: 220px;
+  top: 255px;
   left: 735px;
   transform: scale(0.60)
 }
 .right-side-right-arrow-button {
   position: absolute;
-  top: 250px;
+  top: 285px;
   left: 775px;
   transform: scale(0.60)
 }
 .right-side-down-arrow-button {
   position: absolute;
-  top: 280px;
+  top: 315px;
   left: 735px;
   transform: scale(0.60)
 }

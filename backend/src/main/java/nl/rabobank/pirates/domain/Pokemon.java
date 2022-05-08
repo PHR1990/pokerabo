@@ -25,6 +25,8 @@ public class Pokemon {
 
     private List<StatAmount> stats;
 
+    private int level;
+
     public void dealDamage(int damage) {
         currentHp-=damage;
     }

@@ -14,40 +14,33 @@ public class PokemonController {
     @Autowired
     private PokemonService pokemonService;
 
-    @GetMapping(path="{pokemonName}", produces = "application/json")
-    public Pokemon getPokemon(@PathVariable final String pokemonName) {
-        Pokemon pokemon = pokemonService.getPokemonByName(pokemonName);
-
+    @GetMapping(path="{pokemonName}/level/{level}", produces = "application/json")
+    public Pokemon getPokemonByName(@PathVariable final String pokemonName, @PathVariable final int level) {
+        Pokemon pokemon = pokemonService.getPokemonByName(pokemonName, level);
         return pokemon;
     }
-
-    @PostMapping(path="/own-pokemon/{pokemonName}", produces = "application/json")
-    public Pokemon chooseOwnPokemon(@PathVariable final String pokemonName) {
-        Pokemon pokemon = pokemonService.setOwnPokemonByName(pokemonName);
+    @PostMapping(path="/own-pokemon/{pokemonName}/level/{level}", produces = "application/json")
+    public Pokemon chooseOwnPokemon(@PathVariable final String pokemonName, @PathVariable final int level) {
+        Pokemon pokemon = pokemonService.selectOwnPokemonByName(pokemonName, level);
         return pokemon;
     }
-
-    @PostMapping(path="/enemy-pokemon/{pokemonName}", produces = "application/json")
-    public Pokemon chooseEnemyPokemon(@PathVariable final String pokemonName) {
-        Pokemon pokemon = pokemonService.setEnemyPokemonByName(pokemonName);
+    @PostMapping(path="/enemy-pokemon/{pokemonName}/level/{level}", produces = "application/json")
+    public Pokemon chooseEnemyPokemon(@PathVariable final String pokemonName, @PathVariable final int level) {
+        Pokemon pokemon = pokemonService.selectEnemyPokemonByName(pokemonName, level);
         return pokemon;
     }
-
     @GetMapping(path="execute-turn", produces = "application/json")
     public TurnInformation executeTurn() {
         return pokemonService.executeTurn();
     }
-
     @GetMapping(path="/own-pokemon/", produces = "application/json")
-    public Pokemon getOwnPokemon() {
+    public Pokemon getSelectedOwnPokemon() {
         Pokemon pokemon = pokemonService.getCurrentOwnPokemon();
         return pokemon;
     }
-
     @GetMapping(path="/enemy-pokemon/", produces = "application/json")
-    public Pokemon getEnemyPokemon() {
+    public Pokemon getSelectedEnemyPokemon() {
         Pokemon pokemon = pokemonService.getCurrentEnemyPokemon();
         return pokemon;
     }
-
 }
