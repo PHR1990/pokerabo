@@ -28,8 +28,7 @@ public class MoveService {
     private static final String RED_BLUE_VERSION_GROUP = "red-blue";
 
     private List<String> prohibitedMoves
-            = Arrays.asList("poison-powder", "leech-seed", "rage", "withdraw", "fury-swipes", "meditate", "agility"
-    ,"double-kick", "comet-punch", "harden", "focus-energy");
+            = Arrays.asList("poison-powder", "leech-seed", "rage", "fury-swipes","double-kick", "comet-punch", "focus-energy");
     // Implement status effects
     // Create a move set builder, find moves that would make sense for a particular pokemon.
 

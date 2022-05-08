@@ -73,11 +73,10 @@ export class SimulateComponent implements OnInit, OnDestroy {
         if (action.type === TurnActionType.TEXT_ONLY) {
           that.text = action.text;
         } else if (action.type === TurnActionType.DAMAGE_ANIMATION_AGAINST_OWN) {
-          console.log('own pokemon was damaged');
           that.ownPokemonData.currentHp -= action.damage;
         } else if (action.type === TurnActionType.DAMAGE_ANIMATION_AGAINST_ENEMY) {
-          console.log('enemy pokemon was damaged');
           that.enemyPokemonData.currentHp -= action.damage;
+        } else {
         }
 
       }, index * 1000);

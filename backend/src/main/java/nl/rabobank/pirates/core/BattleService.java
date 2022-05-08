@@ -23,7 +23,6 @@ public class BattleService {
 
     public TurnInformation executeTurn() {
         if (currentOwnPokemon == null || currentEnemyPokemon == null) return null;
-        // Pokemons must have been set before
 
         List<TurnAction> actions = new ArrayList<>();
         
@@ -40,14 +39,13 @@ public class BattleService {
 
         if (ownPokemonGoesFirst) {
 
-            processDamageOwnPokemonAgainstEnemyAndPutIntoActions(actions, ownPokemonMove);
+            processMoveAndAddToActions(actions, ownPokemonMove, currentOwnPokemon, currentEnemyPokemon);
 
-            processDamageEnemyPokemonAgainstOwnAndPutIntoActions(actions, enemyPokemonMove);
+            processMoveAndAddToActions(actions, enemyPokemonMove, currentEnemyPokemon, currentOwnPokemon);
         } else {
+            processMoveAndAddToActions(actions, enemyPokemonMove, currentEnemyPokemon, currentOwnPokemon);
 
-            processDamageEnemyPokemonAgainstOwnAndPutIntoActions(actions, enemyPokemonMove);
-
-            processDamageOwnPokemonAgainstEnemyAndPutIntoActions(actions, ownPokemonMove);
+            processMoveAndAddToActions(actions, ownPokemonMove, currentOwnPokemon, currentEnemyPokemon);
         }
 
         actions.add(TurnAction.builder()
@@ -58,36 +56,99 @@ public class BattleService {
         return TurnInformation.builder().actions(actions).build();
     }
 
-    private void processDamageEnemyPokemonAgainstOwnAndPutIntoActions(final List<TurnAction> actions, Move pokemonMove) {
-
-        int damageAgainstOwnPokemon = calculateDamage(currentEnemyPokemon.getLevel(), pokemonMove.getPower(), currentEnemyPokemon.getStatAmount(Stat.ATTACK), currentOwnPokemon.getStatAmount(Stat.DEFENSE));
-
-        actions.add(TurnAction.builder()
-                .text(buildPokemonUsedMove(currentEnemyPokemon.getName(), pokemonMove.getName(), true))
-                .type(TurnActionType.TEXT_ONLY)
-                .build());
-
-        currentOwnPokemon.dealDamage(damageAgainstOwnPokemon);
-
-        actions.add(TurnAction.builder()
-                .type(TurnActionType.DAMAGE_ANIMATION_AGAINST_OWN)
-                .damage(damageAgainstOwnPokemon)
-                .build());
+    private void processMoveAndAddToActions(final List<TurnAction> actions, Move pokemonMove, Pokemon attackingPokemon, Pokemon defendingPokemon) {
+        switch (pokemonMove.getDamageClass()) {
+            case SPECIAL -> {
+                int damage = calculateDamage(
+                        attackingPokemon.getLevel(), pokemonMove.getPower(),
+                        attackingPokemon.getStatAmount(Stat.SPECIAL_ATTACK),
+                        defendingPokemon.getStatAmount(Stat.SPECIAL_DEFENSE));
+                processDamageClassAndAddIntoActions(actions, pokemonMove, damage, attackingPokemon, defendingPokemon);
+                break;
+            }
+            case PHYSICAL -> {
+                int damage = calculateDamage(
+                        attackingPokemon.getLevel(), pokemonMove.getPower(),
+                        attackingPokemon.getStatAmount(Stat.ATTACK),
+                        defendingPokemon.getStatAmount(Stat.DEFENSE));
+                processDamageClassAndAddIntoActions(actions, pokemonMove, damage, attackingPokemon, defendingPokemon);
+                break;
+            }
+            case STATUS ->  {
+                processStatusChangeClassAndAddIntoActions(actions, pokemonMove, attackingPokemon, defendingPokemon);
+                break;
+            }
+        }
     }
 
-    private void processDamageOwnPokemonAgainstEnemyAndPutIntoActions(final List<TurnAction> actions, Move pokemonMove) {
-        int damageAgainstEnemyPokemon = calculateDamage(currentOwnPokemon.getLevel(), pokemonMove.getPower()
-                , currentOwnPokemon.getStatAmount(Stat.ATTACK), currentEnemyPokemon.getStatAmount(Stat.DEFENSE));
-        // Own pokemon
+    private void processStatusChangeClassAndAddIntoActions(final List<TurnAction> actions, final Move pokemonMove,
+                                                           final Pokemon attackingPokemon, final Pokemon defendingPokemon) {
+        boolean isAttackingPokemonOwn = attackingPokemon.equals(currentOwnPokemon);
+
         actions.add(TurnAction.builder()
-                .text(buildPokemonUsedMove(currentOwnPokemon.getName(), pokemonMove.getName(), false))
+                .text(buildPokemonUsedMove(attackingPokemon.getName(), pokemonMove.getName(), !isAttackingPokemonOwn))
                 .type(TurnActionType.TEXT_ONLY)
                 .build());
 
-        currentEnemyPokemon.dealDamage(damageAgainstEnemyPokemon);
+        for (StatChange statChange : pokemonMove.getStatChanges()) {
+            TurnActionType targetPokemonAnimationType;
+            String text;
+            if (statChange.getChangeAmount() > 0) {
+
+                targetPokemonAnimationType = TurnActionType.STAT_EFFECT_AGAINST_OWN;
+                boolean wasModified = attackingPokemon
+                        .addStatMultiplier(StatMultiplier.builder().stat(statChange.getStat())
+                                .stageModification(statChange.getChangeAmount()).build());
+
+                if (wasModified) {
+                    text = attackingPokemon.getName() + " " + statChange.getStat().getLabel() + " rose!";
+                } else {
+                    text = attackingPokemon.getName() + " " + statChange.getStat().getLabel() + " won't go any higher!";
+                }
+
+            } else {
+
+                targetPokemonAnimationType = TurnActionType.STAT_EFFECT_AGAINST_ENEMY;
+                boolean wasModified = defendingPokemon
+                        .addStatMultiplier(StatMultiplier.builder().stat(statChange.getStat())
+                                .stageModification(statChange.getChangeAmount()).build());
+                if (wasModified) {
+                    text = defendingPokemon.getName() + " " + statChange.getStat().getLabel() + " fell!";
+                } else {
+                    text = defendingPokemon.getName() + " " + statChange.getStat().getLabel() + " won't go any lower!";
+                }
+            }
+
+            actions.add(TurnAction.builder()
+                    .text(text)
+                    .type(TurnActionType.TEXT_ONLY)
+                    .build());
+
+        }
+
+    }
+
+    private void processDamageClassAndAddIntoActions(
+            final List<TurnAction> actions, final Move pokemonMove, final int damage,
+            final Pokemon attackingPokemon, final Pokemon defendingPokemon) {
+
+        boolean isAttackingPokemonOwn = attackingPokemon.equals(currentOwnPokemon);
+
         actions.add(TurnAction.builder()
-                .type(TurnActionType.DAMAGE_ANIMATION_AGAINST_ENEMY)
-                .damage(damageAgainstEnemyPokemon)
+                .text(buildPokemonUsedMove(attackingPokemon.getName(), pokemonMove.getName(), !isAttackingPokemonOwn))
+                .type(TurnActionType.TEXT_ONLY)
+                .build());
+
+        defendingPokemon.dealDamage(damage);
+
+        TurnActionType targetPokemonAnimationType =
+                isAttackingPokemonOwn ?
+                        TurnActionType.DAMAGE_ANIMATION_AGAINST_ENEMY:
+                        TurnActionType.DAMAGE_ANIMATION_AGAINST_OWN;
+
+        actions.add(TurnAction.builder()
+                .type(targetPokemonAnimationType)
+                .damage(damage)
                 .build());
     }
 
@@ -98,8 +159,8 @@ public class BattleService {
         );
     }
 
-    private String buildPokemonUsedMove(String pokemonName, String moveName, boolean isFoe) {
-        String prefix = isFoe ? "Foe " : "";
+    private String buildPokemonUsedMove(String pokemonName, String moveName, boolean shouldAppendIsFoeText) {
+        String prefix = shouldAppendIsFoeText ? "Foe " : "";
         return prefix + pokemonName + " used " + moveName.toUpperCase();
     }
 
