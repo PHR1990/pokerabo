@@ -1,42 +1,66 @@
-package nl.rabobank.pirates.rest;
+package nl.rabobank.pirates.smoke;
 
 import nl.rabobank.pirates.client.pokemon.PokemonDto;
+import nl.rabobank.pirates.core.BattleService;
+import nl.rabobank.pirates.core.MoveService;
+import nl.rabobank.pirates.core.PokemonApiRestClient;
 import nl.rabobank.pirates.core.PokemonService;
 import nl.rabobank.pirates.domain.TurnInformation;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.Spy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
-@SpringBootTest(classes = PokemonService.class)
-class IntegrationTests {
+/**
+ * These smoke tests are used to guarantee that the core functionality works when the project is started up.
+ *
+ * As in:
+ * External API is consumed from.
+ * Calculations are done
+ * Battle turns are somewhat respected
+ *
+ */
+@SpringBootTest(classes = {PokemonService.class, BattleService.class, MoveService.class, PokemonApiRestClient.class})
+class SmokeTests {
 
-    @InjectMocks
+    @Autowired
+    private BattleService battleService;
+
+    @Autowired
     private PokemonService pokemonService;
 
-    @Spy
-    private RestTemplate restTemplate;
+    @Autowired
+    private MoveService moveService;
+
+    @SpyBean
+    private PokemonApiRestClient apiRestClient;
+
+    @Test
+    public void do_smoke_test() {
+        battleService.selectEnemyPokemonByName("charmander", 5);
+        pokemonService.getPokemonByName("charmander", 5);
+        battleService.selectOwnPokemonByName("bulbasaur", 5);
+        moveService.getMoveByName("growl");
+        moveService.getMoveByName("growl");
+
+        assert_application_doesnt_call_external_api_for_known_resource();
+    }
 
     /**
      * BE VERY CAREFUL TO NOT OVERLY CALL THE API OR ELSE THEY MAY BAN U BY IP
      */
-    @Test
-    public void when_same_pokemon_called_use_local_storage() {
-        pokemonService.getPokemonByName("charmander", 5);
-        pokemonService.getPokemonByName("charmander", 5);
-        pokemonService.getPokemonByName("charmander", 5);
-
-        Mockito.verify(restTemplate, Mockito.atMost(1)).getForObject("https://pokeapi.co/api/v2/pokemon/charmander", PokemonDto.class);
+    private void assert_application_doesnt_call_external_api_for_known_resource() {
+        Mockito.verify(apiRestClient, Mockito.atMost(1)).getPokemonByName("charmander");
+        Mockito.verify(apiRestClient, Mockito.atMost(1)).getMoveByName("growl");
     }
 
-    @Test
-    public void when_execute_turn_is_called_must() {
-        pokemonService.selectEnemyPokemonByName("charmander", 5);
-        pokemonService.selectOwnPokemonByName("bulbasaur", 5);
-
-        TurnInformation turnInformation = pokemonService.executeTurn();
-
-    }
 }
