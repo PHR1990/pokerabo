@@ -58,25 +58,26 @@ public class BattleService {
 
     private void processMoveAndAddToActions(final List<TurnAction> actions, Move pokemonMove, Pokemon attackingPokemon, Pokemon defendingPokemon) {
         switch (pokemonMove.getDamageClass()) {
-            case SPECIAL:
-                int damage1 = calculateDamage(
+            case SPECIAL -> {
+                int damage = calculateDamage(
                         attackingPokemon.getLevel(), pokemonMove.getPower(),
                         attackingPokemon.getStatAmount(Stat.SPECIAL_ATTACK),
                         defendingPokemon.getStatAmount(Stat.SPECIAL_DEFENSE));
-                processDamageClassAndAddIntoActions(actions, pokemonMove, damage1, attackingPokemon, defendingPokemon);
+                processDamageClassAndAddIntoActions(actions, pokemonMove, damage, attackingPokemon, defendingPokemon);
                 break;
-            case PHYSICAL:
-                int damage2 = calculateDamage(
+            }
+            case PHYSICAL -> {
+                int damage = calculateDamage(
                         attackingPokemon.getLevel(), pokemonMove.getPower(),
                         attackingPokemon.getStatAmount(Stat.ATTACK),
                         defendingPokemon.getStatAmount(Stat.DEFENSE));
-                processDamageClassAndAddIntoActions(actions, pokemonMove, damage2, attackingPokemon, defendingPokemon);
+                processDamageClassAndAddIntoActions(actions, pokemonMove, damage, attackingPokemon, defendingPokemon);
                 break;
-
-            case STATUS:
+            }
+            case STATUS ->  {
                 processStatusChangeClassAndAddIntoActions(actions, pokemonMove, attackingPokemon, defendingPokemon);
                 break;
-
+            }
         }
     }
 
