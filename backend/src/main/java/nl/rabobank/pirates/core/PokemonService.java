@@ -66,25 +66,18 @@ public class PokemonService {
             );
         }
 
+        statAmountList.add(StatAmount.builder().stat(Stat.ACCURACY).amount(100).build());
+        statAmountList.add(StatAmount.builder().stat(Stat.EVASION).amount(100).build());
+
         return statAmountList;
     }
 
-
-
-    /**
-     * Stats Formula for gen3+
-     * Stats = (floor(0.01 x (2 x Base) x Level) + 5)
-     */
     private int calculateStat(int level, int baseStat) {
         return Math.round((float)Math.floor(
-                0.01 * (2 * baseStat * level) + level + 5
+                0.01 * (2 * baseStat * level) + 5
         ));
     }
 
-    /**
-     * HP we will be using:
-     * HP = floor(0.01 x (2 x Base) x Level) + Level + 10
-     */
     private int calculateMaxHp(int level, PokemonDto pokemonDto) {
 
         for (StatDtoWrapper statDtoWrapper : pokemonDto.getStats()) {
@@ -96,11 +89,6 @@ public class PokemonService {
         }
 
         throw new RuntimeException("HP BASE STAT WASNT FOUND");
-    }
-
-    private int getRandomValue(int rangeStart, int rangeEnd) {
-        final Random random = new Random();
-        return random.ints(rangeStart, rangeEnd).findFirst().getAsInt();
     }
 
 }

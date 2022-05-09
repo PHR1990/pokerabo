@@ -31,8 +31,15 @@ public class MoveService {
     private static final String RED_BLUE_VERSION_GROUP = "red-blue";
 
     private List<String> prohibitedMoves
-            = Arrays.asList("poison-powder", "leech-seed", "rage", "fury-swipes","double-kick", "comet-punch", "focus-energy",
-            "quick-attack", "thunder-shock", "tackle");
+            = Arrays.asList("double-team",
+            "poison-powder",
+            "sleep-powder",
+            "leech-seed",
+            "rage",
+            "fury-swipes",
+            "double-kick",
+            "comet-punch",
+            "focus-energy", "thunder-wave", "metronome");
     // Implement status effects
     // Create a move set builder, find moves that would make sense for a particular pokemon.
 
@@ -62,9 +69,7 @@ public class MoveService {
                 allPossibleMoves.add(thinMoveWrapperDto.getMove());
             }
         }
-
         List<MoveDto> moves = new ArrayList<>();
-
         // IF we have 4 or less
         if (allPossibleMoves.size() <= 4) {
             for (ThinMoveDto thinMoveDto : allPossibleMoves) {
@@ -72,16 +77,13 @@ public class MoveService {
             }
             return moves;
         }
-
         // Query each move to build the combination of four
-
         while (moves.size() < 4) {
             int randomNumber = getRandomValue(0, allPossibleMoves.size()-1);
             ThinMoveDto randomizedMove = allPossibleMoves.get(randomNumber);
             moves.add(getMoveByName(randomizedMove.getName()));
             allPossibleMoves.remove(randomNumber);
         }
-
         return moves;
     }
 

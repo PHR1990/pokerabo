@@ -34,12 +34,15 @@ public class Pokemon {
         currentHp-=damage;
     }
 
+
     public int getStatAmount(Stat stat) {
         if (statMultipliers == null) {
             statMultipliers = new ArrayList<>();
         }
-        int increaseModifier = 2;
-        int decreaseModifier = 2;
+        final int baseModifier = stat.equals(Stat.ACCURACY) || stat.equals(Stat.EVASION) ? 3 : 2;
+
+        int increaseModifier = baseModifier;
+        int decreaseModifier = baseModifier;
 
         for (StatMultiplier statMultiplier : statMultipliers) {
             if (statMultiplier.getStat().equals(stat)) {

@@ -57,6 +57,7 @@ public class BattleService {
     }
 
     private void processMoveAndAddToActions(final List<TurnAction> actions, Move pokemonMove, Pokemon attackingPokemon, Pokemon defendingPokemon) {
+
         switch (pokemonMove.getDamageClass()) {
             case SPECIAL -> {
                 int damage = calculateDamage(
@@ -139,6 +140,16 @@ public class BattleService {
                 .type(TurnActionType.TEXT_ONLY)
                 .build());
 
+        if (!willMoveHit(pokemonMove, attackingPokemon, defendingPokemon)) {
+
+            actions.add(TurnAction.builder()
+                    .text("The attack missed!")
+                    .type(TurnActionType.TEXT_ONLY)
+                    .build());
+
+            return;
+        }
+
         defendingPokemon.dealDamage(damage);
 
         TurnActionType targetPokemonAnimationType =
@@ -152,11 +163,26 @@ public class BattleService {
                 .build());
     }
 
+    private boolean willMoveHit(Move move, Pokemon attackingPokemon, Pokemon defendingPokemon) {
+        // To properly calculate accuracy must account for evasion
+        int moveAccuracy = move.getAccuracy();
+        int pokemonAccuracy = attackingPokemon.getStatAmount(Stat.ACCURACY);
+
+        int hitChance =  pokemonAccuracy * (moveAccuracy/100);
+
+        int rangeRoll = getRandomValue(0, 101);
+
+        return hitChance >= rangeRoll;
+    }
+
     private int calculateDamage(int level, int movePower, int attack, int defense) {
         if (movePower == 0) return 0;
-        return Math.round(
-                ((((level * 2)/5 + 2) * movePower * attack/defense)/50) + 2
-        );
+
+
+        int damage = Math.round(
+                ((((level * 2)/5 + 2) * movePower * attack/defense)/50) + 2);
+        System.out.println("Calc damage = " + movePower + " attack " + attack + " defense " + defense + " Equals = " + damage);
+        return damage;
     }
 
     private String buildPokemonUsedMove(String pokemonName, String moveName, boolean shouldAppendIsFoeText) {
