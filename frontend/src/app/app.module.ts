@@ -23,7 +23,6 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatCardModule} from '@angular/material/card';
 import {BottomBarComponent} from './bottom-bar/bottom-bar.component';
 import {MatDialogModule} from '@angular/material/dialog';
-import {FaqComponent} from './faq/faq.component';
 import {SimulateComponent} from './simulate/simulate.component';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 
@@ -34,7 +33,6 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     TopBarComponent,
     HomeComponent,
     BottomBarComponent,
-    FaqComponent,
     SimulateComponent
   ],
   imports: [
