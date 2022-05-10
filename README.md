@@ -36,20 +36,33 @@ gathered information from the external API must be stored to avoid calling them 
 When turns are completed the backend will maintain the state of the battle (only a single user is supported) and the backend sends the instructions to be
 processed by the frontend to display things in order (texts, damage updates, possibly animations, etc)
 
-## Assignment high level goals
-
-- Improve the code quality
-  - Add unit tests
-  - Decouple logic
-  - Separate classes into the proper packages
-  - Review comments on spots (fixing every single thing is surely impossible in an appropriate time frame)
-- Implement features 
-  - Frontend must display texts properly (broken into new lines)
-  - Block a user from submitting several (Next turn) requests
-  - Backend must save in a local database when an already known resource (Pokemon or Move) is queried
-  - Calculations must be improved:
+## Assignment Requirements
+### Backend
+- Refactor
+  - Make sure that no existing business logic is broken
+  - Adding unit tests might be an idea to help during this process
+  - Make it more readable
+  - Decouple when possible/cleaner
+  - Note: We are aware that not everything can be refactored in this timeframe, so, refactoring + commenting other subjects to it is a good idea.
+- Code review
+  - Code smells, confusing code, improper ways, etc.
+- Implement features
+   - Fix the broken unit tests (Smoke tests SHOULD NOT be broken when this project is running properly the first time)
+   - Calculations must be improved:
     - Apply STAB damage
     - Account for Weaknesses and Resistances
-  - Support New Move Types
-    - Stat modifiers (must be added to the calculations)
-    - Accuracy modifiers (must be added to the calculations)
+### Frontend
+- Unit test
+  - Component 'simulate' can be tested with any strategy/framework you feel is relevant.
+- Implement features  
+  - Block a user from submitting several (Next turn) requests while it hant processed yet
+  - Some messages are displayed leaking outside of the screen. Find a way to solve that
+
+## What is evaluated
+ - Your thought process
+ - Code 'cleaness? and readness?' 
+ - Your strenghts (you should prioritize show what you are best at)
+
+## What is NOT the goal
+ - Ruin your weekend with a long assignment
+ - Make you spend way too much time (over 3 hours) on this.
