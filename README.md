@@ -38,24 +38,22 @@ processed by the frontend to display things in order (texts, damage updates, pos
 
 ## Assignment Requirements
 ### Backend
-- Refactor
-  - Make sure that no existing business logic is broken (define a class for this)
+- Refactor class 'BattleService'
+  - Make sure that no existing business logic is broken
   - Adding unit tests might be an idea to help during this process
   - Make it more readable
-  - Decouple when possible/cleaner
-  - Note: We are aware that not everything can be refactored in this timeframe, so, refactoring + commenting other subjects to it is a good idea.
-- Code review (Define ONE class to be reviewed)
+  - Decouple when possible to make it cleaner and more cohesive
+  - Note: We are aware that not everything can be refactored in this timeframe, so, refactoring + commenting other subjects is a good idea.
+- Code review class 'MoveService' (you may still comment on other places that are relevant)
   - Code smells, confusing code, improper ways, etc.
 - Implement features
-   - Fix the broken unit tests (Smoke tests SHOULD NOT be broken when this project is running properly the first time)
-   - Calculations must be improved:
-    - Apply STAB damage
-    - -- note to selv. This is a single item, re-write to make it a single item
+   - Implement the code based on unit tests that aren't passing (Smoke tests SHOULD NOT be broken when this project is running properly the first time)
+      - The unit tests will help you implement STAB (same-type attack bonus)
 ### Frontend
 - Unit test
   - Component 'simulate' can be tested with any strategy/framework you feel is relevant.
 - Implement features  
-  - Some messages are displayed leaking outside of the screen. Find a way to solve that
+  - Some messages are displayed leaking outside of the screen when they are to long. Find a way to solve that
 
 ## What is evaluated
  - Your thought process 
