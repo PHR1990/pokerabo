@@ -19,10 +19,10 @@ export class SimulateComponent implements OnInit, OnDestroy {
   chosenEnemyPokemonIndex = 1;
 
   private possiblePokemon = [
-    'charmander', 'squirtle', 'bulbasaur', 'pikachu', 'pidgey', 'mankey',
-    'charmeleon', 'wartortle', 'ivysaur', 'raichu', 'jolteon', 'flareon',
+    'charmander', 'squirtle', 'pikachu', 'pidgey', 'mankey',
+    'charmeleon', 'wartortle', 'raichu', 'jolteon', 'flareon',
     'vaporeon', 'kadabra', 'hitmonchan', 'hitmonlee', 'graveler', 'golem',
-    'primeape', 'blastoise', 'charizard', 'venusaur', "gyarados"
+    'primeape', 'blastoise', 'charizard', "gyarados"
   ];
 
   ownPokemonLevel = 5;
@@ -34,7 +34,7 @@ export class SimulateComponent implements OnInit, OnDestroy {
 
   text;
 
-  playingMessage = false;
+  messagesLeftToDisplay = 0;
 
   constructor(private pokemonService: PokemonService) { }
   ngOnInit(): void {
@@ -59,7 +59,7 @@ export class SimulateComponent implements OnInit, OnDestroy {
       this.selectPokemonAndStartBattle();
       return;
     }
-    if (!this.playingMessage) {
+    if (this.messagesLeftToDisplay === 0) {
       this.pokemonService.executeTurn().then(res => {
         this.turnInformation = res;
         this.animateTurnAndDisplayTexts();
@@ -68,13 +68,16 @@ export class SimulateComponent implements OnInit, OnDestroy {
   }
   animateTurnAndDisplayTexts(): void {
     // Create A unit test for this. How can he guarantee that the butotn is only pressed once for every batch
-    let index = 1;
+    let timeMultiplier = 1;
+
+    this.messagesLeftToDisplay = this.turnInformation.actions.length;
     const that = this;
     this.turnInformation.actions.forEach(action => {
-      that.playingMessage = true;
-      index++;
-      setTimeout(() => {
 
+      timeMultiplier++;
+
+      setTimeout(() => {
+        that.messagesLeftToDisplay--;
         if (action.type === TurnActionType.TEXT_ONLY) {
           that.text = action.text;
         } else if (action.type === TurnActionType.DAMAGE_ANIMATION_AGAINST_OWN) {
@@ -86,10 +89,8 @@ export class SimulateComponent implements OnInit, OnDestroy {
           that.text = action.text;
           this.restartBattle = true;
         }
-        if (index === this.turnInformation.actions.length-1) {
-          that.playingMessage = false;
-        }
-      }, index * 750);
+
+      }, timeMultiplier * 750);
     });
   }
   updateEnemyPokemonHp(): Promise<void> {
