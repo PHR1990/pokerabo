@@ -6,8 +6,16 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum Type {
-    FIRE("fire"), WATER("water"), GRASS("grass"),
-    ELECTRIC("electric"), PSYCHIC("psychic"), NORMAL("normal") ,POISON("poison");
+    FIRE("fire"),
+    WATER("water"),
+    GRASS("grass"),
+    ELECTRIC("electric"),
+    PSYCHIC("psychic"),
+    NORMAL("normal"),
+    POISON("poison"),
+    GROUND("ground"),
+    ROCK("rock"),
+    ICE("ice");
 
     private final String label;
 

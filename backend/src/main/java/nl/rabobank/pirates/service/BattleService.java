@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @Component
 public class BattleService {
@@ -22,6 +21,9 @@ public class BattleService {
 
     @Autowired
     private TurnActionService turnActionService;
+
+    @Autowired
+    private CalculationService calculationService;
 
     @Getter
     private Pokemon currentOwnPokemon;
@@ -34,8 +36,8 @@ public class BattleService {
 
         List<TurnAction> actions = new ArrayList<>();
         
-        int ownPokemonMoveIndex = getRandomValue(0, currentOwnPokemon.getMoves().size());
-        int enemyPokemonMoveIndex = getRandomValue(0, currentEnemyPokemon.getMoves().size());
+        int ownPokemonMoveIndex = calculationService.getRandomValue(0, currentOwnPokemon.getMoves().size());
+        int enemyPokemonMoveIndex = calculationService.getRandomValue(0, currentEnemyPokemon.getMoves().size());
         Move ownPokemonMove = currentOwnPokemon.getMoves().get(ownPokemonMoveIndex);
         Move enemyPokemonMove = currentEnemyPokemon.getMoves().get(enemyPokemonMoveIndex);
 
@@ -49,17 +51,25 @@ public class BattleService {
 
             turnActionService.processMoveAndAddToActions(actions, ownPokemonMove, currentOwnPokemon, currentEnemyPokemon, true);
 
-            turnActionService.processMoveAndAddToActions(actions, enemyPokemonMove, currentEnemyPokemon, currentOwnPokemon, false);
+            if (currentEnemyPokemon.getCurrentHp() > 0) {
+                turnActionService.processMoveAndAddToActions(actions, enemyPokemonMove, currentEnemyPokemon, currentOwnPokemon, false);
+            }
         } else {
+
             turnActionService.processMoveAndAddToActions(actions, enemyPokemonMove, currentEnemyPokemon, currentOwnPokemon, false);
 
-            turnActionService.processMoveAndAddToActions(actions, ownPokemonMove, currentOwnPokemon, currentEnemyPokemon, true);
+            if (currentOwnPokemon.getCurrentHp() > 0) {
+                turnActionService.processMoveAndAddToActions(actions, ownPokemonMove, currentOwnPokemon, currentEnemyPokemon, true);
+            }
+
         }
 
-        actions.add(TurnAction.builder()
-                .text("What will " + currentOwnPokemon.getName().toUpperCase() + " do?")
-                .type(TurnActionType.TEXT_ONLY)
-                .build());
+        if (currentOwnPokemon.getCurrentHp() > 0 && currentEnemyPokemon.getCurrentHp() > 0) {
+            actions.add(TurnAction.builder()
+                    .text("What will " + currentOwnPokemon.getName().toUpperCase() + " do?")
+                    .type(TurnActionType.TEXT_ONLY)
+                    .build());
+        }
 
         return TurnInformation.builder().actions(actions).build();
     }
@@ -72,11 +82,6 @@ public class BattleService {
     public Pokemon selectEnemyPokemonByName(final String pokemonName, int level) {
         currentEnemyPokemon = pokemonService.getPokemonByName(pokemonName, level);
         return currentEnemyPokemon;
-    }
-
-    private int getRandomValue(int rangeStart, int rangeEnd) {
-        final Random random = new Random();
-        return random.ints(rangeStart, rangeEnd).findFirst().getAsInt();
     }
 
 }

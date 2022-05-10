@@ -21,10 +21,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * TODO Implement Accuracy to calculations
+ * Several types of moves are not supported.
+ * Basically only damage, status buffs/debuffs and accuracy for now.
  */
 @Component
 public class MoveService {
+
+    @Autowired
+    private CalculationService calculationService;
 
     @Autowired
     private PokemonApiRestClient pokemonApiRestClient;
@@ -35,17 +39,8 @@ public class MoveService {
 
     private static final String RED_BLUE_VERSION_GROUP = "red-blue";
 
-    private List<String> prohibitedMoves
-            = Arrays.asList("double-team",
-            "poison-powder",
-            "sleep-powder",
-            "leech-seed",
-            "rage",
-            "fury-swipes",
-            "double-kick",
-            "comet-punch",
-            "focus-energy", "thunder-wave", "metronome");
-    // Implement status effects
+
+    // Status effects are all missing for now
     // Create a move set builder, find moves that would make sense for a particular pokemon.
 
     // Round robin from lowest level to highest
@@ -84,7 +79,7 @@ public class MoveService {
         }
         // Query each move to build the combination of four
         while (moves.size() < 4) {
-            int randomNumber = getRandomValue(0, allPossibleMoves.size()-1);
+            int randomNumber = calculationService.getRandomValue(0, allPossibleMoves.size()-1);
             ThinMoveDto randomizedMove = allPossibleMoves.get(randomNumber);
             moves.add(getMoveByName(randomizedMove.getName()));
             allPossibleMoves.remove(randomNumber);
@@ -95,7 +90,7 @@ public class MoveService {
     private boolean isMoveAllowed(int level, ThinMoveWrapperDto thinMoveWrapperDto) {
         boolean isMoveAllowed = false;
 
-        if (prohibitedMoves.contains(thinMoveWrapperDto.getMove().getName())) {
+        if (MoveServiceConstants.PROHIBITED_MOVES.contains(thinMoveWrapperDto.getMove().getName())) {
             return false;
         }
 
@@ -171,34 +166,8 @@ public class MoveService {
             }
             move = move.toBuilder().statChanges(statChanges).build();
         }
-        Type type = Type.NORMAL; // Using normal as a fallback to avoid weird exceptions
-        switch(moveDto.getType().getName()) {
-            case "normal":
-                type = Type.NORMAL;
-                break;
-            case "water":
-                type = Type.WATER;
-                break;
-            case "fire":
-                type = Type.FIRE;
-                break;
-            case "electric":
-                type = Type.ELECTRIC;
-                break;
-            case "grass":
-                type = Type.GRASS;
-                break;
-            case "poison":
-                type = Type.POISON;
-                break;
-        }
 
-        return move.toBuilder().type(type).build();
-    }
-
-    private int getRandomValue(int rangeStart, int rangeEnd) {
-        final Random random = new Random();
-        return random.ints(rangeStart, rangeEnd).findFirst().getAsInt();
+        return move.toBuilder().type(Type.valueOfLabel(moveDto.getName())).build();
     }
 
 }

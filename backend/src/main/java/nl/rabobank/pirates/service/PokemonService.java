@@ -31,6 +31,9 @@ public class PokemonService {
     @Autowired
     private MoveService moveService;
 
+    @Autowired
+    private CalculationService calculationService;
+
     public Pokemon getPokemonByName(final String pokemonName, int level) {
         if (level == 0) level = 5;
         PokemonDto pokemonDto;
@@ -41,12 +44,14 @@ public class PokemonService {
         }
         pokemonStorage.put(pokemonName, pokemonDto);
 
+        final int maxHp = calculationService.calculateMaxHp(level, pokemonDto);
+
         return Pokemon.builder()
                 .name(pokemonDto.getName().toUpperCase())
                 .backSpriteUrl(pokemonDto.getSprites().getBackDefault())
                 .frontSpriteUrl(pokemonDto.getSprites().getFrontDefault())
-                .maxHp(calculateMaxHp(level, pokemonDto))
-                .currentHp(calculateMaxHp(level, pokemonDto))
+                .maxHp(maxHp)
+                .currentHp(maxHp)
                 .stats(convertAndCalculateToStatsAmount(pokemonDto.getStats(), level))
                 .moves(moveService.getFourRandomMoves(pokemonDto, level))
                 .type(Type.valueOfLabel(pokemonDto.getTypes().get(0).getType().getName()))
@@ -55,10 +60,10 @@ public class PokemonService {
     }
 
     private List<StatAmount> convertAndCalculateToStatsAmount(List<StatDtoWrapper> statDtoWrapperList, int level) {
-        List<StatAmount> statAmountList = new ArrayList<>();
+        final List<StatAmount> statAmountList = new ArrayList<>();
 
         for (StatDtoWrapper statDtoWrapper : statDtoWrapperList) {
-            int statAmount = calculateStat(level, statDtoWrapper.getBaseStat());
+            int statAmount = calculationService.calculateStat(level, statDtoWrapper.getBaseStat());
             statAmountList.add(
                     StatAmount.builder()
                             .amount(statAmount)
@@ -71,25 +76,6 @@ public class PokemonService {
         statAmountList.add(StatAmount.builder().stat(Stat.EVASION).amount(100).build());
 
         return statAmountList;
-    }
-
-    private int calculateStat(int level, int baseStat) {
-        return Math.round((float)Math.floor(
-                0.01 * (2 * baseStat * level) + 5
-        ));
-    }
-
-    private int calculateMaxHp(int level, PokemonDto pokemonDto) {
-
-        for (StatDtoWrapper statDtoWrapper : pokemonDto.getStats()) {
-            if ("hp".equals(statDtoWrapper.getStat().getName())) {
-                return Math.round((float)Math.floor(
-                        0.01 * (2 * Integer.valueOf(statDtoWrapper.getBaseStat()) * level) + level + 10
-                ));
-            }
-        }
-
-        throw new RuntimeException("HP BASE STAT WASNT FOUND");
     }
 
 }

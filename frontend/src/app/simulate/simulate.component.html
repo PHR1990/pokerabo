@@ -89,12 +89,12 @@
       </button>
     </div>
 
-      <div class="enemy-pokemon-sprite">
+      <div *ngIf="this.enemyPokemonData.currentHp > 0" class="enemy-pokemon-sprite">
 
         <img [src]="this.enemyPokemonData.frontSpriteUrl" width="100" height="100" >
       </div>
 
-      <div class="own-pokemon-sprite">
+      <div *ngIf="this.ownPokemonData.currentHp > 0" class="own-pokemon-sprite">
 
         <img [src]="this.ownPokemonData.backSpriteUrl" width="130" height="130" >
       </div>

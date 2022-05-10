@@ -38,7 +38,7 @@ processed by the frontend to display things in order (texts, damage updates, pos
 
 ## Assignment Requirements
 ### Backend
-- Refactor class 'BattleService'
+- Refactor class 'TurnActionService'
   - Make sure that no existing business logic is broken
   - Adding unit tests might be an idea to help during this process
   - Make it more readable

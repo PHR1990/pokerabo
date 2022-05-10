@@ -22,7 +22,7 @@ export class SimulateComponent implements OnInit, OnDestroy {
     'charmander', 'squirtle', 'bulbasaur', 'pikachu', 'pidgey', 'mankey',
     'charmeleon', 'wartortle', 'ivysaur', 'raichu', 'jolteon', 'flareon',
     'vaporeon', 'kadabra', 'hitmonchan', 'hitmonlee', 'graveler', 'golem',
-    'primeape', 'blastoise', 'charizard', 'venusaur'
+    'primeape', 'blastoise', 'charizard', 'venusaur', "gyarados"
   ];
 
   ownPokemonLevel = 5;
@@ -33,6 +33,8 @@ export class SimulateComponent implements OnInit, OnDestroy {
   turnInformation: TurnInformation;
 
   text;
+
+  playingMessage = false;
 
   constructor(private pokemonService: PokemonService) { }
   ngOnInit(): void {
@@ -57,16 +59,19 @@ export class SimulateComponent implements OnInit, OnDestroy {
       this.selectPokemonAndStartBattle();
       return;
     }
-    this.pokemonService.executeTurn().then(res => {
-      this.turnInformation = res;
-      this.animateTurnAndDisplayTexts();
-    });
+    if (!this.playingMessage) {
+      this.pokemonService.executeTurn().then(res => {
+        this.turnInformation = res;
+        this.animateTurnAndDisplayTexts();
+      });
+    }
   }
   animateTurnAndDisplayTexts(): void {
     // Create A unit test for this. How can he guarantee that the butotn is only pressed once for every batch
     let index = 1;
     const that = this;
     this.turnInformation.actions.forEach(action => {
+      that.playingMessage = true;
       index++;
       setTimeout(() => {
 
@@ -76,10 +81,15 @@ export class SimulateComponent implements OnInit, OnDestroy {
           that.ownPokemonData.currentHp -= action.damage;
         } else if (action.type === TurnActionType.DAMAGE_ANIMATION_AGAINST_ENEMY) {
           that.enemyPokemonData.currentHp -= action.damage;
-        } else {
+        } else if (action.type === TurnActionType.FAINT_ANIMATION_OWN_POKEMON ||
+          action.type === TurnActionType.FAINT_ANIMATION_ENEMY_POKEMON){
+          that.text = action.text;
+          this.restartBattle = true;
         }
-
-      }, index * 1000);
+        if (index === this.turnInformation.actions.length-1) {
+          that.playingMessage = false;
+        }
+      }, index * 750);
     });
   }
   updateEnemyPokemonHp(): Promise<void> {
