@@ -1,13 +1,18 @@
-package nl.rabobank.pirates.core;
+package nl.rabobank.pirates.service;
 
-import nl.rabobank.pirates.client.common.Type;
+import nl.rabobank.pirates.client.PokemonApiRestClient;
+import nl.rabobank.pirates.model.common.Type;
 import nl.rabobank.pirates.client.move.MoveDto;
 import nl.rabobank.pirates.client.move.StatChangeDto;
 import nl.rabobank.pirates.client.pokemon.PokemonDto;
 import nl.rabobank.pirates.client.pokemon.ThinMoveDto;
 import nl.rabobank.pirates.client.pokemon.ThinMoveWrapperDto;
 import nl.rabobank.pirates.client.pokemon.VersionGroupDetailsDto;
-import nl.rabobank.pirates.domain.*;
+import nl.rabobank.pirates.model.common.Stat;
+import nl.rabobank.pirates.model.common.StatChange;
+import nl.rabobank.pirates.model.move.DamageClass;
+import nl.rabobank.pirates.model.move.Move;
+import nl.rabobank.pirates.model.move.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

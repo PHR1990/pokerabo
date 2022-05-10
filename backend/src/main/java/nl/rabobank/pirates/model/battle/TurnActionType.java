@@ -1,4 +1,4 @@
-package nl.rabobank.pirates.domain;
+package nl.rabobank.pirates.model.battle;
 
 public enum TurnActionType {
     TEXT_ONLY, DAMAGE_ANIMATION_AGAINST_OWN, DAMAGE_ANIMATION_AGAINST_ENEMY, STAT_EFFECT_AGAINST_OWN, STAT_EFFECT_AGAINST_ENEMY

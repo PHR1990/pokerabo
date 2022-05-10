@@ -1,7 +1,12 @@
-package nl.rabobank.pirates.core;
+package nl.rabobank.pirates.service;
 
 import lombok.Getter;
-import nl.rabobank.pirates.domain.*;
+import nl.rabobank.pirates.model.battle.TurnAction;
+import nl.rabobank.pirates.model.battle.TurnActionType;
+import nl.rabobank.pirates.model.battle.TurnInformation;
+import nl.rabobank.pirates.model.common.Pokemon;
+import nl.rabobank.pirates.model.common.Stat;
+import nl.rabobank.pirates.model.move.Move;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

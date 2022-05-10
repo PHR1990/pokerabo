@@ -1,6 +1,5 @@
-package nl.rabobank.pirates.domain;
+package nl.rabobank.pirates.model.move;
 
 public enum DamageClass {
-
     STATUS, PHYSICAL, SPECIAL
 }

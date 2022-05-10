@@ -1,4 +1,4 @@
-package nl.rabobank.pirates.core;
+package nl.rabobank.pirates.client;
 
 import nl.rabobank.pirates.client.move.MoveDto;
 import nl.rabobank.pirates.client.pokemon.PokemonDto;

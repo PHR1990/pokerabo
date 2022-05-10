@@ -1,4 +1,4 @@
-package nl.rabobank.pirates.domain;
+package nl.rabobank.pirates.model.battle;
 
 import lombok.Builder;
 import lombok.Getter;

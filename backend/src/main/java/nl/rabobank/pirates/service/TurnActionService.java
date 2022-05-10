@@ -1,6 +1,12 @@
-package nl.rabobank.pirates.core;
+package nl.rabobank.pirates.service;
 
-import nl.rabobank.pirates.domain.*;
+import nl.rabobank.pirates.model.battle.TurnAction;
+import nl.rabobank.pirates.model.battle.TurnActionType;
+import nl.rabobank.pirates.model.common.Pokemon;
+import nl.rabobank.pirates.model.common.Stat;
+import nl.rabobank.pirates.model.common.StatChange;
+import nl.rabobank.pirates.model.common.StatMultiplier;
+import nl.rabobank.pirates.model.move.Move;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -9,7 +15,31 @@ import java.util.Random;
 @Component
 public class TurnActionService {
 
-    //abstract void processMoveAndAddToActions(final List<TurnAction> actions, Move pokemonMove, Pokemon attackingPokemon, Pokemon defendingPokemon);
+    public void processMoveAndAddToActions(final List<TurnAction> actions, Move pokemonMove, Pokemon attackingPokemon, Pokemon defendingPokemon, boolean isOwnPokemonAttacking) {
+
+        switch (pokemonMove.getDamageClass()) {
+            case SPECIAL -> {
+                int damage = calculateDamage(
+                        attackingPokemon.getLevel(), pokemonMove.getPower(),
+                        attackingPokemon.getStatAmount(Stat.SPECIAL_ATTACK),
+                        defendingPokemon.getStatAmount(Stat.SPECIAL_DEFENSE));
+                processDamageClassAndAddIntoActions(actions, pokemonMove, damage, attackingPokemon, defendingPokemon, isOwnPokemonAttacking);
+                break;
+            }
+            case PHYSICAL -> {
+                int damage = calculateDamage(
+                        attackingPokemon.getLevel(), pokemonMove.getPower(),
+                        attackingPokemon.getStatAmount(Stat.ATTACK),
+                        defendingPokemon.getStatAmount(Stat.DEFENSE));
+                processDamageClassAndAddIntoActions(actions, pokemonMove, damage, attackingPokemon, defendingPokemon, isOwnPokemonAttacking);
+                break;
+            }
+            case STATUS ->  {
+                processStatusChangeClassAndAddIntoActions(actions, pokemonMove, attackingPokemon, defendingPokemon, isOwnPokemonAttacking);
+                break;
+            }
+        }
+    }
 
     private void processDamageClassAndAddIntoActions(
             final List<TurnAction> actions, final Move pokemonMove, final int damage,
@@ -55,38 +85,12 @@ public class TurnActionService {
         return hitChance >= rangeRoll;
     }
 
-    public void processMoveAndAddToActions(final List<TurnAction> actions, Move pokemonMove, Pokemon attackingPokemon, Pokemon defendingPokemon, boolean isOwnPokemonAttacking) {
-
-        switch (pokemonMove.getDamageClass()) {
-            case SPECIAL -> {
-                int damage = calculateDamage(
-                        attackingPokemon.getLevel(), pokemonMove.getPower(),
-                        attackingPokemon.getStatAmount(Stat.SPECIAL_ATTACK),
-                        defendingPokemon.getStatAmount(Stat.SPECIAL_DEFENSE));
-                processDamageClassAndAddIntoActions(actions, pokemonMove, damage, attackingPokemon, defendingPokemon, isOwnPokemonAttacking);
-                break;
-            }
-            case PHYSICAL -> {
-                int damage = calculateDamage(
-                        attackingPokemon.getLevel(), pokemonMove.getPower(),
-                        attackingPokemon.getStatAmount(Stat.ATTACK),
-                        defendingPokemon.getStatAmount(Stat.DEFENSE));
-                processDamageClassAndAddIntoActions(actions, pokemonMove, damage, attackingPokemon, defendingPokemon, isOwnPokemonAttacking);
-                break;
-            }
-            case STATUS ->  {
-                processStatusChangeClassAndAddIntoActions(actions, pokemonMove, attackingPokemon, defendingPokemon, isOwnPokemonAttacking);
-                break;
-            }
-        }
-    }
 
     private int calculateDamage(int level, int movePower, int attack, int defense) {
         if (movePower == 0) return 0;
 
         int damage = Math.round(
                 ((((level * 2)/5 + 2) * movePower * attack/defense)/50) + 2);
-        System.out.println("Calc damage = " + movePower + " attack " + attack + " defense " + defense + " Equals = " + damage);
         return damage;
     }
 

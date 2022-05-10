@@ -1,8 +1,8 @@
-package nl.rabobank.pirates.domain;
+package nl.rabobank.pirates.model.common;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import nl.rabobank.pirates.model.move.Move;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,10 +30,11 @@ public class Pokemon {
 
     private int level;
 
+    private Type type;
+
     public void dealDamage(int damage) {
         currentHp-=damage;
     }
-
 
     public int getStatAmount(Stat stat) {
         if (statMultipliers == null) {

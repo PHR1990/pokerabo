@@ -1,10 +1,10 @@
 package nl.rabobank.pirates.smoke;
 
-import nl.rabobank.pirates.core.BattleService;
-import nl.rabobank.pirates.core.MoveService;
-import nl.rabobank.pirates.core.PokemonApiRestClient;
-import nl.rabobank.pirates.core.PokemonService;
-import nl.rabobank.pirates.domain.TurnInformation;
+import nl.rabobank.pirates.service.BattleService;
+import nl.rabobank.pirates.service.MoveService;
+import nl.rabobank.pirates.client.PokemonApiRestClient;
+import nl.rabobank.pirates.service.PokemonService;
+import nl.rabobank.pirates.model.battle.TurnInformation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

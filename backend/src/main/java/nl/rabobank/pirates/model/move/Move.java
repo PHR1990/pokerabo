@@ -1,8 +1,9 @@
-package nl.rabobank.pirates.domain;
+package nl.rabobank.pirates.model.move;
 
 import lombok.Builder;
 import lombok.Getter;
-import nl.rabobank.pirates.client.common.Type;
+import nl.rabobank.pirates.model.common.StatChange;
+import nl.rabobank.pirates.model.common.Type;
 
 import java.util.List;
 

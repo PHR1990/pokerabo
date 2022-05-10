@@ -1,19 +1,19 @@
-package nl.rabobank.pirates.core;
+package nl.rabobank.pirates.service;
 
 import lombok.Getter;
-import nl.rabobank.pirates.client.common.Type;
-import nl.rabobank.pirates.client.move.MoveDto;
+import nl.rabobank.pirates.client.PokemonApiRestClient;
 import nl.rabobank.pirates.client.pokemon.PokemonDto;
 import nl.rabobank.pirates.client.pokemon.StatDtoWrapper;
-import nl.rabobank.pirates.domain.*;
+import nl.rabobank.pirates.model.common.Pokemon;
+import nl.rabobank.pirates.model.common.Stat;
+import nl.rabobank.pirates.model.common.StatAmount;
+import nl.rabobank.pirates.model.common.Type;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -49,6 +49,7 @@ public class PokemonService {
                 .currentHp(calculateMaxHp(level, pokemonDto))
                 .stats(convertAndCalculateToStatsAmount(pokemonDto.getStats(), level))
                 .moves(moveService.getFourRandomMoves(pokemonDto, level))
+                .type(Type.valueOfLabel(pokemonDto.getTypes().get(0).getType().getName()))
                 .level(level)
                 .build();
     }

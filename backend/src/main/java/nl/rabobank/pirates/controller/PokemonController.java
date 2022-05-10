@@ -1,9 +1,9 @@
-package nl.rabobank.pirates.rest;
+package nl.rabobank.pirates.controller;
 
-import nl.rabobank.pirates.core.BattleService;
-import nl.rabobank.pirates.core.PokemonService;
-import nl.rabobank.pirates.domain.Pokemon;
-import nl.rabobank.pirates.domain.TurnInformation;
+import nl.rabobank.pirates.service.BattleService;
+import nl.rabobank.pirates.service.PokemonService;
+import nl.rabobank.pirates.model.common.Pokemon;
+import nl.rabobank.pirates.model.battle.TurnInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
