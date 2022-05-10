@@ -39,30 +39,31 @@ processed by the frontend to display things in order (texts, damage updates, pos
 ## Assignment Requirements
 ### Backend
 - Refactor
-  - Make sure that no existing business logic is broken
+  - Make sure that no existing business logic is broken (define a class for this)
   - Adding unit tests might be an idea to help during this process
   - Make it more readable
   - Decouple when possible/cleaner
   - Note: We are aware that not everything can be refactored in this timeframe, so, refactoring + commenting other subjects to it is a good idea.
-- Code review
+- Code review (Define ONE class to be reviewed)
   - Code smells, confusing code, improper ways, etc.
 - Implement features
    - Fix the broken unit tests (Smoke tests SHOULD NOT be broken when this project is running properly the first time)
    - Calculations must be improved:
     - Apply STAB damage
-    - Account for Weaknesses and Resistances
+    - -- note to selv. This is a single item, re-write to make it a single item
 ### Frontend
 - Unit test
   - Component 'simulate' can be tested with any strategy/framework you feel is relevant.
 - Implement features  
-  - Block a user from submitting several (Next turn) requests while it hant processed yet
   - Some messages are displayed leaking outside of the screen. Find a way to solve that
 
 ## What is evaluated
- - Your thought process
- - Code 'cleaness? and readness?' 
- - Your strenghts (you should prioritize show what you are best at)
+ - Your thought process 
+ - How clean/readable is your code 
+ - Your strenghts (show us what you are best at)
+ - Note: These points will be discussed in the technical interview 
 
 ## What is NOT the goal
  - Ruin your weekend with a long assignment
  - Make you spend way too much time (over 3 hours) on this.
+ - This is not supposed to be a stressful assignment. We want this to be a lighthearted assignment to be used as input for the technical interview.
