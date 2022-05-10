@@ -7,7 +7,7 @@ This is a project to be used for rabobank candidates. (and an experiment for us 
 
 ## Installation
 ### Backend
-The backend only requires maven (and JDK so far tested on 17.0.3), but it is also recommended to use a lombok plugin
+The backend requires maven, jdk (at least 15) and lombok. Notice that the project is configured for java 17, but it was also tested on java 15
 
 Within the backend folder:
 ```bash
