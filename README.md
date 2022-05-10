@@ -26,15 +26,17 @@ ng serve
 
 ## Project Description
 
-The project is a simulation of a pokemon battle between two pokemons.
+The project is a very simplified simulation of a pokemon battle between two pokemons.
 
 A user would choose between 2 pokemons and their levels and press next turn to simulate turn by turn.
 
 The backend will read pokemon data from an external API (https://pokeapi.co/) and build the battle information. 
-gathered information from the external API must be stored to avoid calling them unecessary (to be polite using their public API).
+gathered information from the external API must be stored to avoid calling them unnecessary (to be polite using their public API).
 
 When turns are completed the backend will maintain the state of the battle (only a single user is supported) and the backend sends the instructions to be
 processed by the frontend to display things in order (texts, damage updates, possibly animations, etc)
+
+Notice that calculations, move effects and several other things were not implemented (yet)
 
 ## Assignment Requirements
 ### Backend
