@@ -20,7 +20,6 @@ public interface MoveServiceConstants {
             "clamp",
             "bind",
             "bide",
-            "acid-armor",
             "confure-ray",
             "disable",
             "dream-eater",

@@ -181,6 +181,9 @@ public class GetMoveService {
         if (effectDto.getEffect().toLowerCase().contains("hits twice in one turn")) {
             return HitTimes.TWICE;
         }
+        if (effectDto.getEffect().toLowerCase().contains("hits twice in the same turn")) {
+            return HitTimes.TWICE;
+        }
         return HitTimes.ONCE;
     }
 
