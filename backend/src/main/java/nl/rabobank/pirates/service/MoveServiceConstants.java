@@ -7,12 +7,9 @@ public interface MoveServiceConstants {
     List<String> PROHIBITED_MOVES
             = Arrays.asList(
             "double-team",
-            "poison-powder",
-            "sleep-powder",
             "leech-seed",
             "rage",
             "focus-energy",
-            "thunder-wave",
             "metronome",
             "dig",
             "hyper-beam",
@@ -29,7 +26,6 @@ public interface MoveServiceConstants {
             "guilliotine",
             "haze",
             "horn-drill",
-            "hypnosis",
             "leech-life",
             "leech-seed",
             "lovely-kiss",

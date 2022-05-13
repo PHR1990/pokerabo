@@ -11,10 +11,7 @@ import nl.rabobank.pirates.client.pokemon.ThinMoveWrapperDto;
 import nl.rabobank.pirates.client.pokemon.VersionGroupDetailsDto;
 import nl.rabobank.pirates.model.common.Stat;
 import nl.rabobank.pirates.model.common.StatChange;
-import nl.rabobank.pirates.model.move.DamageClass;
-import nl.rabobank.pirates.model.move.HitTimes;
-import nl.rabobank.pirates.model.move.Move;
-import nl.rabobank.pirates.model.move.Target;
+import nl.rabobank.pirates.model.move.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -169,9 +166,28 @@ public class GetMoveService {
             move = move.toBuilder().statChanges(statChanges).build();
         }
 
-        move = move.toBuilder().hitTimes(convertHitTimes(moveDto.getEffectEntries().get(0))).build();
+        move = move.toBuilder()
+                .hitTimes(convertHitTimes(moveDto.getEffectEntries().get(0)))
+                .statusEffect(convertStatusEffect(moveDto.getEffectEntries().get(0)))
+            .build();
 
         return move.toBuilder().type(Type.valueOfLabel(moveDto.getName())).build();
+    }
+
+    private StatusEffect convertStatusEffect(EffectDto effectDto) {
+        if (effectDto.getEffect().toLowerCase().contains("puts the target to sleep")) {
+            return StatusEffect.SLEEP;
+        }
+        if (effectDto.getEffect().toLowerCase().contains("poisons the target")) {
+            return StatusEffect.POISON;
+        }
+        if (effectDto.getEffect().toLowerCase().contains("badly poisons the target")) {
+            return StatusEffect.BADLY_POISONED;
+        }
+        if (effectDto.getEffect().toLowerCase().contains("paralyzes the target")) {
+            return StatusEffect.PARALYZED;
+        }
+        return StatusEffect.NONE;
     }
 
     private HitTimes convertHitTimes(EffectDto effectDto) {

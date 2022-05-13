@@ -3,6 +3,7 @@ package nl.rabobank.pirates.model.common;
 import lombok.Builder;
 import lombok.Getter;
 import nl.rabobank.pirates.model.move.Move;
+import nl.rabobank.pirates.model.move.StatusEffect;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,8 +33,14 @@ public class Pokemon {
 
     private Type type;
 
+    private List<StatusEffect> statusEffects;
+
     public void dealDamage(int damage) {
         currentHp-=damage;
+    }
+
+    public boolean isPokemonAfflictedBy(StatusEffect statusEffect) {
+        return statusEffects != null && statusEffects.contains(statusEffect);
     }
 
     public int getStatAmount(Stat stat) {
@@ -75,6 +82,15 @@ public class Pokemon {
         }
         statMultipliers.add(statMultiplier);
         return true;
+    }
+
+    public boolean addStatusEffect(StatusEffect statusEffect) {
+        if (statusEffects == null) {
+            statusEffects = new ArrayList<>();
+        }
+        if (statusEffects.contains(statusEffect)) return false;
+
+        return statusEffects.add(statusEffect);
     }
 
 }

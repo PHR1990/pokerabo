@@ -7,6 +7,7 @@ import nl.rabobank.pirates.model.battle.TurnInformation;
 import nl.rabobank.pirates.model.common.Pokemon;
 import nl.rabobank.pirates.model.common.Stat;
 import nl.rabobank.pirates.model.move.Move;
+import nl.rabobank.pirates.model.move.StatusEffect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -48,23 +49,25 @@ public class BattleService {
         }
 
         if (ownPokemonGoesFirst) {
-
             turnActionService.processMoveAndAddToActions(actions, ownPokemonMove, currentOwnPokemon, currentEnemyPokemon, true);
-
             if (currentEnemyPokemon.getCurrentHp() > 0) {
                 turnActionService.processMoveAndAddToActions(actions, enemyPokemonMove, currentEnemyPokemon, currentOwnPokemon, false);
             }
         } else {
-
             turnActionService.processMoveAndAddToActions(actions, enemyPokemonMove, currentEnemyPokemon, currentOwnPokemon, false);
-
             if (currentOwnPokemon.getCurrentHp() > 0) {
                 turnActionService.processMoveAndAddToActions(actions, ownPokemonMove, currentOwnPokemon, currentEnemyPokemon, true);
             }
 
         }
 
-        if (currentOwnPokemon.getCurrentHp() > 0 && currentEnemyPokemon.getCurrentHp() > 0) {
+        if (areBothPokemonStillAlive()) {
+            applyBurnOrPoison(currentEnemyPokemon, actions);
+            applyBurnOrPoison(currentOwnPokemon, actions);
+        }
+
+        if (areBothPokemonStillAlive()) {
+
             actions.add(TurnAction.builder()
                     .text("What will " + currentOwnPokemon.getName().toUpperCase() + " do?")
                     .type(TurnActionType.TEXT_ONLY)
@@ -72,6 +75,42 @@ public class BattleService {
         }
 
         return TurnInformation.builder().actions(actions).build();
+    }
+
+    private boolean areBothPokemonStillAlive() {
+        return currentOwnPokemon.getCurrentHp() > 0 && currentEnemyPokemon.getCurrentHp() > 0;
+    }
+
+    public void applyBurnOrPoison(Pokemon pokemon, List<TurnAction> actions) {
+        TurnActionType turnActionType
+                = pokemon == currentOwnPokemon ? TurnActionType.DAMAGE_ANIMATION_AGAINST_OWN : TurnActionType.DAMAGE_ANIMATION_AGAINST_ENEMY;
+        final String appendingString = pokemon == currentOwnPokemon ? "" : "The foe's ";
+        int damage = pokemon.getMaxHp()/8;
+
+        if (pokemon.isPokemonAfflictedBy(StatusEffect.BURN)) {
+
+            actions.add(TurnAction.builder()
+                    .text(appendingString + currentOwnPokemon.getName().toUpperCase() + " is hurt by its burn!")
+                    .type(TurnActionType.TEXT_ONLY)
+                    .build());
+
+            actions.add(TurnAction.builder()
+                    .damage(damage)
+                    .type(turnActionType)
+                    .build());
+        } else if (pokemon.isPokemonAfflictedBy(StatusEffect.POISON)) {
+            actions.add(TurnAction.builder()
+                    .text(appendingString + currentOwnPokemon.getName().toUpperCase() + " is hurt by poison!")
+                    .type(TurnActionType.TEXT_ONLY)
+                    .build());
+
+            actions.add(TurnAction.builder()
+                    .text(appendingString + currentOwnPokemon.getName().toUpperCase() + " is hurt by poison!")
+                    .damage(damage)
+                    .type(turnActionType)
+                    .build());
+        }
+
     }
 
     public Pokemon selectOwnPokemonByName(final String pokemonName, final int level) {

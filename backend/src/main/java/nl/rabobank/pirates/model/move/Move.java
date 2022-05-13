@@ -19,6 +19,7 @@ public class Move {
     private DamageClass damageClass;
     private HitTimes hitTimes;
     private List<StatChange> statChanges;
+    private StatusEffect statusEffect;
 }
 
 

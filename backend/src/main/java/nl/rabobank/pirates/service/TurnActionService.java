@@ -11,6 +11,7 @@ import nl.rabobank.pirates.model.move.Move;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -121,6 +122,16 @@ public class TurnActionService {
                 .type(TurnActionType.TEXT_ONLY)
                 .build());
 
+        if (!willMoveHit(pokemonMove, attackingPokemon, defendingPokemon)) {
+
+            actions.add(TurnAction.builder()
+                    .text("The attack missed!")
+                    .type(TurnActionType.TEXT_ONLY)
+                    .build());
+
+            return;
+        }
+
         for (StatChange statChange : pokemonMove.getStatChanges()) {
             TurnActionType targetPokemonAnimationType;
             String text;
@@ -138,7 +149,6 @@ public class TurnActionService {
                 }
 
             } else {
-
                 targetPokemonAnimationType = TurnActionType.STAT_EFFECT_AGAINST_ENEMY;
                 boolean wasModified = defendingPokemon
                         .addStatMultiplier(StatMultiplier.builder().stat(statChange.getStat())
@@ -155,6 +165,11 @@ public class TurnActionService {
                     .type(TurnActionType.TEXT_ONLY)
                     .build());
         }
+
+        if (pokemonMove.getStatusEffect() != null) {
+            defendingPokemon.addStatusEffect(pokemonMove.getStatusEffect());
+        }
+
     }
 
     private String buildPokemonUsedMove(String pokemonName, String moveName, boolean shouldAppendIsFoeText) {
