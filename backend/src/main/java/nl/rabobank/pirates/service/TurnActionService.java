@@ -6,6 +6,7 @@ import nl.rabobank.pirates.model.common.Pokemon;
 import nl.rabobank.pirates.model.common.Stat;
 import nl.rabobank.pirates.model.common.StatChange;
 import nl.rabobank.pirates.model.common.StatMultiplier;
+import nl.rabobank.pirates.model.move.HitTimes;
 import nl.rabobank.pirates.model.move.Move;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,6 +49,7 @@ public class TurnActionService {
             final List<TurnAction> actions, final Move pokemonMove, final int damage,
             final Pokemon attackingPokemon, final Pokemon defendingPokemon, boolean isOwnPokemonAttacking) {
 
+
         actions.add(TurnAction.builder()
                 .text(buildPokemonUsedMove(attackingPokemon.getName(), pokemonMove.getName(), !isOwnPokemonAttacking))
                 .type(TurnActionType.TEXT_ONLY)
@@ -63,17 +65,30 @@ public class TurnActionService {
             return;
         }
 
-        defendingPokemon.dealDamage(damage);
+        int numberHits = calculationService.calculateNumberOfHitTimes(pokemonMove.getHitTimes());
 
-        TurnActionType targetPokemonAnimationType =
-                isOwnPokemonAttacking ?
-                        TurnActionType.DAMAGE_ANIMATION_AGAINST_ENEMY:
-                        TurnActionType.DAMAGE_ANIMATION_AGAINST_OWN;
+        for (int x = 0; x < numberHits; x++) {
 
-        actions.add(TurnAction.builder()
-                .type(targetPokemonAnimationType)
-                .damage(damage)
-                .build());
+            defendingPokemon.dealDamage(damage);
+
+            TurnActionType targetPokemonAnimationType =
+                    isOwnPokemonAttacking ?
+                            TurnActionType.DAMAGE_ANIMATION_AGAINST_ENEMY:
+                            TurnActionType.DAMAGE_ANIMATION_AGAINST_OWN;
+
+            actions.add(TurnAction.builder()
+                    .type(targetPokemonAnimationType)
+                    .damage(damage)
+                    .build());
+        }
+
+        if (numberHits > 1) {
+            actions.add(TurnAction.builder()
+                    .text("Hit the enemy " + numberHits + " times!")
+                    .type(TurnActionType.TEXT_ONLY)
+                    .build());
+        }
+
 
         if (defendingPokemon.getCurrentHp() <= 0) {
 

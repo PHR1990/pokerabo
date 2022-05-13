@@ -1,21 +1,16 @@
 package nl.rabobank.pirates.smoke;
 
 import nl.rabobank.pirates.service.BattleService;
-import nl.rabobank.pirates.service.MoveService;
+import nl.rabobank.pirates.service.GetMoveService;
 import nl.rabobank.pirates.client.PokemonApiRestClient;
-import nl.rabobank.pirates.service.PokemonService;
+import nl.rabobank.pirates.service.GetPokemonService;
 import nl.rabobank.pirates.model.battle.TurnInformation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * These smoke tests are used to guarantee that the core functionality works when the project is started up.
@@ -33,10 +28,10 @@ class SmokeTests {
     private BattleService battleService;
 
     @Autowired
-    private PokemonService pokemonService;
+    private GetPokemonService pokemonService;
 
     @Autowired
-    private MoveService moveService;
+    private GetMoveService moveService;
 
     @SpyBean
     private PokemonApiRestClient apiRestClient;

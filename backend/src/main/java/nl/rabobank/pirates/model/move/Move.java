@@ -17,6 +17,7 @@ public class Move {
     private Target target;
     private Type type;
     private DamageClass damageClass;
+    private HitTimes hitTimes;
     private List<StatChange> statChanges;
 }
 

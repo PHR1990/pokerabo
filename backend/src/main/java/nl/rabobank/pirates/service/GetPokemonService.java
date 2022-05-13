@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class PokemonService {
+public class GetPokemonService {
 
     private Map<String, PokemonDto> pokemonStorage = new ConcurrentHashMap<>();
 
@@ -29,7 +29,7 @@ public class PokemonService {
     private PokemonApiRestClient pokemonApiRestClient;
 
     @Autowired
-    private MoveService moveService;
+    private GetMoveService moveService;
 
     @Autowired
     private CalculationService calculationService;

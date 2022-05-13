@@ -22,4 +22,5 @@ public class MoveDto {
     private List<StatChangeDto> statChanges;
     private DamageClassDto damageClass;
     private TypeDto type;
+    private List<EffectDto> effectEntries;
 }

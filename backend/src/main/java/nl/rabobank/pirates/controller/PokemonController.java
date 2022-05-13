@@ -1,7 +1,7 @@
 package nl.rabobank.pirates.controller;
 
 import nl.rabobank.pirates.service.BattleService;
-import nl.rabobank.pirates.service.PokemonService;
+import nl.rabobank.pirates.service.GetPokemonService;
 import nl.rabobank.pirates.model.common.Pokemon;
 import nl.rabobank.pirates.model.battle.TurnInformation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class PokemonController {
 
     @Autowired
-    private PokemonService pokemonService;
+    private GetPokemonService pokemonService;
 
     @Autowired
     private BattleService battleService;

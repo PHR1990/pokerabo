@@ -1,6 +1,7 @@
 package nl.rabobank.pirates.service;
 
 import nl.rabobank.pirates.client.PokemonApiRestClient;
+import nl.rabobank.pirates.client.move.EffectDto;
 import nl.rabobank.pirates.model.common.Type;
 import nl.rabobank.pirates.client.move.MoveDto;
 import nl.rabobank.pirates.client.move.StatChangeDto;
@@ -11,6 +12,7 @@ import nl.rabobank.pirates.client.pokemon.VersionGroupDetailsDto;
 import nl.rabobank.pirates.model.common.Stat;
 import nl.rabobank.pirates.model.common.StatChange;
 import nl.rabobank.pirates.model.move.DamageClass;
+import nl.rabobank.pirates.model.move.HitTimes;
 import nl.rabobank.pirates.model.move.Move;
 import nl.rabobank.pirates.model.move.Target;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Basically only damage, status buffs/debuffs and accuracy for now.
  */
 @Component
-public class MoveService {
+public class GetMoveService {
 
     @Autowired
     private CalculationService calculationService;
@@ -167,7 +169,19 @@ public class MoveService {
             move = move.toBuilder().statChanges(statChanges).build();
         }
 
+        move = move.toBuilder().hitTimes(convertHitTimes(moveDto.getEffectEntries().get(0))).build();
+
         return move.toBuilder().type(Type.valueOfLabel(moveDto.getName())).build();
+    }
+
+    private HitTimes convertHitTimes(EffectDto effectDto) {
+        if (effectDto.getEffect().toLowerCase().contains("hits 2–5 times in one turn")) {
+            return HitTimes.TWO_TO_FIVE;
+        }
+        if (effectDto.getEffect().toLowerCase().contains("hits twice in one turn")) {
+            return HitTimes.TWICE;
+        }
+        return HitTimes.ONCE;
     }
 
 }

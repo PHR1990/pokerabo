@@ -1,6 +1,6 @@
 package nl.rabobank.pirates.pokerabo;
 
-import nl.rabobank.pirates.service.PokemonService;
+import nl.rabobank.pirates.service.GetPokemonService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class PokeRaboApplicationTests {
 
 	@Autowired
-	private PokemonService plateService;
+	private GetPokemonService plateService;
 
 
 	@Test

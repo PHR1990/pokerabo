@@ -17,7 +17,7 @@ import java.util.List;
 public class BattleService {
 
     @Autowired
-    private PokemonService pokemonService;
+    private GetPokemonService pokemonService;
 
     @Autowired
     private TurnActionService turnActionService;

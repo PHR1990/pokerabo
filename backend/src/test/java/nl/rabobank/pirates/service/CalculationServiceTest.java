@@ -1,7 +1,10 @@
 package nl.rabobank.pirates.service;
 
+import nl.rabobank.pirates.move.mock.MoveDtoFactoryTest;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 

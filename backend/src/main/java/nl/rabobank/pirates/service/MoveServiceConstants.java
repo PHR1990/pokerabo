@@ -4,16 +4,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public interface MoveServiceConstants {
-    public static final List<String> PROHIBITED_MOVES
+    List<String> PROHIBITED_MOVES
             = Arrays.asList(
             "double-team",
             "poison-powder",
             "sleep-powder",
             "leech-seed",
             "rage",
-            "fury-swipes",
-            "double-kick",
-            "comet-punch",
             "focus-energy",
             "thunder-wave",
             "metronome",
@@ -23,17 +20,12 @@ public interface MoveServiceConstants {
             "clamp",
             "bind",
             "bide",
-            "acird-armor",
-            "barrage",
-            "bonemerang",
+            "acid-armor",
             "confure-ray",
             "disable",
-            "double-slap",
             "dream-eater",
-            "egg-bomb",
             "explosion",
             "fissure",
-            "fury-attack",
             "glare",
             "guilliotine",
             "haze",
@@ -47,14 +39,18 @@ public interface MoveServiceConstants {
             "minimize",
             "mist",
             "night-shade",
-            "pin-missile",
             "rest",
             "roar",
-            "recover"
-
+            "recover",
+            "sing"
     );
 
-    public List<String> movesToPrioritizeWhenBuilding = Arrays.asList(
+    List<String> MOVES_TO_PRIORITIZE_WHEN_BUILDING = Arrays.asList(
+            "double-slap",
+            "fury-swipes",
+            "pin-missile",
+            "fury-attack",
+            "double-kick",
             "earthquake",
             "psychic",
             "blizzard",

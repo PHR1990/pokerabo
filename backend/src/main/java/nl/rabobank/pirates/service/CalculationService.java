@@ -3,6 +3,7 @@ package nl.rabobank.pirates.service;
 import nl.rabobank.pirates.client.pokemon.PokemonDto;
 import nl.rabobank.pirates.client.pokemon.StatDtoWrapper;
 import nl.rabobank.pirates.model.common.Pokemon;
+import nl.rabobank.pirates.model.move.HitTimes;
 import nl.rabobank.pirates.model.move.Move;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,7 @@ public class CalculationService {
     }
 
     public boolean calculateAccuracyAndRollIfMoveHits(int pokemonAccuracy, int moveAccuracy) {
-        int hitChance =  pokemonAccuracy * (moveAccuracy/100);
+        int hitChance =  Math.round((float)pokemonAccuracy * ((float)moveAccuracy/100f));
 
         int rangeRoll = getRandomValue(0, 101);
 
@@ -51,5 +52,20 @@ public class CalculationService {
         }
 
         throw new RuntimeException("HP BASE STAT WASNT FOUND");
+    }
+
+    public int calculateNumberOfHitTimes(HitTimes hitTimes) {
+        if (hitTimes.equals(HitTimes.TWO_TO_FIVE)) {
+            int diceRoll = this.getRandomValue(0, 101);
+
+            if (diceRoll < 37) return 2;
+            if (diceRoll > 37 && diceRoll < 75) return 3;
+            if (diceRoll > 75 && diceRoll < 87) return 4;
+            return 5;
+        }
+
+        if (hitTimes.equals(HitTimes.TWICE)) return 2;
+
+        return 1;
     }
 }
