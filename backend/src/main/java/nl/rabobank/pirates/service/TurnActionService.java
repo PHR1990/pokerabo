@@ -2,7 +2,6 @@ package nl.rabobank.pirates.service;
 
 import nl.rabobank.pirates.model.battle.TurnAction;
 import nl.rabobank.pirates.model.battle.TurnActionFactory;
-import nl.rabobank.pirates.model.battle.TurnActionType;
 import nl.rabobank.pirates.model.common.Pokemon;
 import nl.rabobank.pirates.model.common.Stat;
 import nl.rabobank.pirates.model.common.StatChange;
@@ -72,7 +71,7 @@ public class TurnActionService {
         }
 
         if (numberHits > 1) {
-            actions.add(TurnActionFactory.makeTextOnly("Hit the enemy " + numberHits + " times!"));
+            actions.add(TurnActionFactory.makeTextHitXTimes(numberHits));
         }
 
         if (defendingPokemon.getCurrentHp() <= 0) {
@@ -112,7 +111,7 @@ public class TurnActionService {
         }
 
         for (StatChange statChange : pokemonMove.getStatChanges()) {
-            String text;
+
             if (statChange.getChangeAmount() > 0) {
 
                 boolean wasModified = attackingPokemon
@@ -120,9 +119,11 @@ public class TurnActionService {
                                 .stageModification(statChange.getChangeAmount()).build());
 
                 if (wasModified) {
-                    text = attackingPokemon.getName() + " " + statChange.getStat().getLabel() + " rose!";
+                    actions.add(TurnActionFactory.makeTextStatRose(attackingPokemon.getName(), statChange.getStat().getLabel()));
+
                 } else {
-                    text = attackingPokemon.getName() + " " + statChange.getStat().getLabel() + " won't go any higher!";
+                    actions.add(TurnActionFactory.makeTextStatWontRaiseHigher(attackingPokemon.getName(), statChange.getStat().getLabel()));
+
                 }
 
             } else {
@@ -130,13 +131,13 @@ public class TurnActionService {
                         .addStatMultiplier(StatMultiplier.builder().stat(statChange.getStat())
                                 .stageModification(statChange.getChangeAmount()).build());
                 if (wasModified) {
-                    text = defendingPokemon.getName() + " " + statChange.getStat().getLabel() + " fell!";
+
+                    actions.add(TurnActionFactory.makeTextStatFell(attackingPokemon.getName(), statChange.getStat().getLabel()));
                 } else {
-                    text = defendingPokemon.getName() + " " + statChange.getStat().getLabel() + " won't go any lower!";
+                    actions.add(TurnActionFactory.makeTextStatWontFallLower(attackingPokemon.getName(), statChange.getStat().getLabel()));
                 }
             }
 
-            actions.add(TurnActionFactory.makeTextOnly(text));
         }
 
         if (pokemonMove.getStatusEffect() != null) {

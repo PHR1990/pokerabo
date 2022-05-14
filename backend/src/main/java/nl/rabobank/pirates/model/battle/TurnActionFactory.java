@@ -7,6 +7,13 @@ public class TurnActionFactory {
     static final String WHAT_WILL_POKEMON_DO = "what will %s do?";
     static final String POKEMON_IS_HURT_BY_ITS_POISON = "%s is hurt by poison!";
     static final String POKEMON_IS_HURT_BY_ITS_BURN = "%s is hurt by its burn!";
+    static final String POKEMON_FAINTED = "%s fainted!";
+    static final String POKEMON_USED_MOVE = "%s used %s";
+    static final String POKEMON_STAT_ROSE = "%s %s rose!";
+    static final String POKEMON_STAT_WONT_GO_ANY_HIGHER = "%s %s won't go any higher!";
+    static final String POKEMON_STAT_FELL = "%s %s fell!";
+    static final String POKEMON_STAT_WONT_GO_ANY_LOWER = "%s %s won't go any lower!";
+    static final String HIT_THE_ENEMY_TIMES = "Hit the enemy %d times!";
 
     public static TurnAction makeWhatWillPokemonDo(final String pokemonName) {
         return TurnAction.builder()
@@ -17,7 +24,7 @@ public class TurnActionFactory {
 
     public static TurnAction makeWithTextPokemonIsHurtByItsBurn(final String pokemonName, TurnAction.Subject target) {
 
-        final String messageToFormat = appendingString(target) + POKEMON_IS_HURT_BY_ITS_BURN;
+        final String messageToFormat = appendableStringTheFoes(target) + POKEMON_IS_HURT_BY_ITS_BURN;
 
         return TurnAction.builder()
                 .text(String.format(messageToFormat, pokemonName.toUpperCase()))
@@ -27,7 +34,7 @@ public class TurnActionFactory {
 
     public static TurnAction makeWithTextPokemonIsHurtByPoison(final String pokemonName, TurnAction.Subject target) {
 
-        final String messageToFormat = appendingString(target) + POKEMON_IS_HURT_BY_ITS_POISON;
+        final String messageToFormat = appendableStringTheFoes(target) + POKEMON_IS_HURT_BY_ITS_POISON;
 
         return TurnAction.builder()
                 .text(String.format(messageToFormat, pokemonName.toUpperCase()))
@@ -50,11 +57,32 @@ public class TurnActionFactory {
                 .build();
     }
 
+    public static TurnAction makeTextStatRose(final String pokemonName, final String stat) {
+        return makeTextOnly(String.format(POKEMON_STAT_ROSE, pokemonName.toUpperCase(), stat.toUpperCase()));
+    }
+
+    public static TurnAction makeTextStatWontRaiseHigher(final String pokemonName, final String stat) {
+        return makeTextOnly(String.format(POKEMON_STAT_WONT_GO_ANY_HIGHER, pokemonName.toUpperCase(), stat.toUpperCase()));
+    }
+
+    public static TurnAction makeTextStatFell(final String pokemonName, final String stat) {
+        return makeTextOnly(String.format(POKEMON_STAT_FELL, pokemonName.toUpperCase(), stat.toUpperCase()));
+    }
+
+    public static TurnAction makeTextStatWontFallLower(final String pokemonName, final String stat) {
+        return makeTextOnly(String.format(POKEMON_STAT_WONT_GO_ANY_LOWER, pokemonName.toUpperCase(), stat.toUpperCase()));
+    }
+
+    public static TurnAction makeTextHitXTimes(final int times) {
+        return makeTextOnly(String.format(HIT_THE_ENEMY_TIMES, times));
+    }
+
+
     public static TurnAction makeFaintAnimation(final String pokemonName, final TurnAction.Subject subject) {
 
-        final String prefix = getPrefix(subject);
+        final String prefix = appendableStringFoe(subject);
 
-        final String message = prefix + pokemonName + " fainted!";
+        final String message = prefix + String.format(POKEMON_FAINTED, pokemonName.toUpperCase());
 
         return TurnAction.builder()
                 .subject(subject)
@@ -72,8 +100,9 @@ public class TurnActionFactory {
     }
 
     public static TurnAction makePokemonUsedMove(String pokemonName, String moveName, TurnAction.Subject subject) {
-        final String prefix = subject.equals(TurnAction.Subject.ENEMY) ? "Foe " : "";
-        final String moveUsedString = prefix + pokemonName + " used " + moveName.toUpperCase();
+        final String prefix = appendableStringFoe(subject);
+
+        final String moveUsedString = prefix + String.format(POKEMON_USED_MOVE, pokemonName.toUpperCase(), moveName.toUpperCase());
 
         return TurnAction.builder()
                 .text(moveUsedString)
@@ -81,11 +110,11 @@ public class TurnActionFactory {
                 .build();
     }
 
-    private static String getPrefix(TurnAction.Subject subject) {
+    private static String appendableStringFoe(TurnAction.Subject subject) {
         return subject.equals(TurnAction.Subject.ENEMY) ? "Foe " : "";
     }
 
-    private static String appendingString(TurnAction.Subject target) {
+    private static String appendableStringTheFoes(TurnAction.Subject target) {
         return target.equals(TurnAction.Subject.ENEMY)? "The foe's " : "";
     }
 }

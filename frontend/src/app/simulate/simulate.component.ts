@@ -59,6 +59,8 @@ export class SimulateComponent implements OnInit, OnDestroy {
   executeTurn(): void {
     if (this.restartBattle) {
       this.restartBattle = false;
+      this.ownPokemonStatusEffect = '';
+      this.enemyPokemonStatusEffect = '';
       this.selectPokemonAndStartBattle();
       return;
     }
