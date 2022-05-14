@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {PokemonService} from '../pokemon.service';
-import {Pokemon, StatusEffect, Subject, TurnActionType, TurnInformation} from './pokemon.interface';
+import {Condition, Pokemon, StatusEffect, Subject, TurnActionType, TurnInformation} from './pokemon.interface';
 import {forkJoin} from 'rxjs';
 
 @Component({
@@ -96,34 +96,34 @@ export class SimulateComponent implements OnInit, OnDestroy {
           this.restartBattle = true;
         } else if (action.type === TurnActionType.STAT_EFFECT) {
           if (action.subject === Subject.OWN) {
-            this.updateStatusEffectText(action.type, action.statusEffect, true);
+            this.updateStatusEffectText(action.type, action.statusEffect.condition, true);
           } else {
-            this.updateStatusEffectText(action.type, action.statusEffect, false);
+            this.updateStatusEffectText(action.type, action.statusEffect.condition, false);
           }
         }
       }, timeMultiplier * 750);
     });
   }
-  updateStatusEffectText(turnActionType: TurnActionType, statusEffect: StatusEffect, isOwnPokemon: boolean) {
+  updateStatusEffectText(turnActionType: TurnActionType, statusEffect: Condition, isOwnPokemon: boolean) {
     if (!turnActionType) {
       return;
     }
     let text = '';
 
     switch(statusEffect) {
-      case StatusEffect.POISON:
+      case Condition.POISON:
         text = 'PSN';
         break;
-      case StatusEffect.BURN:
+      case Condition.BURN:
         text = 'BRN';
         break;
-      case StatusEffect.PARALYZED:
+      case Condition.PARALYZED:
         text = 'PAR';
         break;
-      case StatusEffect.SLEEP:
+      case Condition.SLEEP:
         text = 'SLP';
         break;
-      case StatusEffect.NONE:
+      case Condition.NONE:
         text = ''
         break;
     }

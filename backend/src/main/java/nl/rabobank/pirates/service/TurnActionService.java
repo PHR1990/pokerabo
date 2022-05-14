@@ -16,7 +16,9 @@ import static nl.rabobank.pirates.model.battle.TurnActionFactory.makeFaintAnimat
 
 @Component
 public class TurnActionService {
-
+    /*
+    TODO in order to process the burn effect, we need to read from effectEntries.effect and roll for effect_change
+     */
     @Autowired
     private CalculationService calculationService;
 
@@ -55,7 +57,7 @@ public class TurnActionService {
         actions.add(TurnActionFactory.makePokemonUsedMove(attackingPokemon.getName().toUpperCase(), pokemonMove.getName(), subjectAttackingPokemon));
 
         if (!willMoveHit(pokemonMove, attackingPokemon, defendingPokemon)) {
-
+            actions.add(TurnActionFactory.makeTextOnly("The attack missed!"));
             return;
         }
 
@@ -83,13 +85,6 @@ public class TurnActionService {
 
             actions.add(makeFaintAnimation(defendingPokemon.getName().toUpperCase(), subjectDefendingPokemon));
         }
-    }
-
-    private boolean willMoveHit(Move move, Pokemon attackingPokemon, Pokemon defendingPokemon) {
-        int moveAccuracy = move.getAccuracy();
-        int pokemonAccuracy = attackingPokemon.getStatAmount(Stat.ACCURACY);
-
-        return calculationService.calculateAccuracyAndRollIfMoveHits(pokemonAccuracy, moveAccuracy);
     }
 
     private void processStatusChangeClassAndAddIntoActions(final List<TurnAction> actions, final Move pokemonMove,
@@ -132,9 +127,9 @@ public class TurnActionService {
                                 .stageModification(statChange.getChangeAmount()).build());
                 if (wasModified) {
 
-                    actions.add(TurnActionFactory.makeTextStatFell(attackingPokemon.getName(), statChange.getStat().getLabel()));
+                    actions.add(TurnActionFactory.makeTextStatFell(defendingPokemon.getName(), statChange.getStat().getLabel()));
                 } else {
-                    actions.add(TurnActionFactory.makeTextStatWontFallLower(attackingPokemon.getName(), statChange.getStat().getLabel()));
+                    actions.add(TurnActionFactory.makeTextStatWontFallLower(defendingPokemon.getName(), statChange.getStat().getLabel()));
                 }
             }
 
@@ -147,5 +142,12 @@ public class TurnActionService {
 
             actions.add(TurnActionFactory.makeStatusEffect(defendingPokemon.getStatusEffects().get(0), subjectDefendingPokemon));
         }
+    }
+
+    private boolean willMoveHit(Move move, Pokemon attackingPokemon, Pokemon defendingPokemon) {
+        int moveAccuracy = move.getAccuracy();
+        int pokemonAccuracy = attackingPokemon.getStatAmount(Stat.ACCURACY);
+
+        return calculationService.calculateAccuracyAndRollIfMoveHits(pokemonAccuracy, moveAccuracy);
     }
 }

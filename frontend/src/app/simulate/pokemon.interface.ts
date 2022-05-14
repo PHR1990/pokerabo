@@ -14,8 +14,12 @@ export interface Pokemon {
   moves: Move[];
   statusEffects:StatusEffect[]
 }
+export interface StatusEffect {
+  condition: Condition;
+  chance: number;
+}
 
-export enum StatusEffect {
+export enum Condition {
   NONE = 'NONE', BURN = 'BURN', POISON = 'POISON', BADLY_POISONED = 'BADLY_POISONED', SLEEP = 'SLEEP', PARALYZED= 'PARALYZED'
   , FROZEN= 'FROZEN', CONFUSED= 'CONFUSED', SEEDED = 'SEEDED'
 }

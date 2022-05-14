@@ -17,6 +17,7 @@ public class MoveDto {
     private int accuracy;
     private int power;
     private int priority;
+    private Integer effectChance;
 
     private TargetDto target;
     private List<StatChangeDto> statChanges;

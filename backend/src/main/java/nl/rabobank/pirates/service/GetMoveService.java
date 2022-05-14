@@ -19,6 +19,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static nl.rabobank.pirates.model.move.StatusEffect.Condition.*;
+
 /**
  * Several types of moves are not supported.
  * Basically only damage, status buffs/debuffs and accuracy for now.
@@ -168,26 +170,35 @@ public class GetMoveService {
 
         move = move.toBuilder()
                 .hitTimes(convertHitTimes(moveDto.getEffectEntries().get(0)))
-                .statusEffect(convertStatusEffect(moveDto.getEffectEntries().get(0)))
+                .statusEffect(convertStatusEffect(moveDto))
             .build();
 
         return move.toBuilder().type(Type.valueOfLabel(moveDto.getName())).build();
     }
 
-    private StatusEffect convertStatusEffect(EffectDto effectDto) {
+    /*
+    Refactor for statusEffect to contain an effect percentage.
+     */
+    private StatusEffect convertStatusEffect(MoveDto moveDto) {
+        EffectDto effectDto = moveDto.getEffectEntries().get(0);
+        int effectChance = moveDto.getEffectChance() != null ? moveDto.getEffectChance() : 100 ;
         if (effectDto.getEffect().toLowerCase().contains("puts the target to sleep")) {
-            return StatusEffect.SLEEP;
+            return StatusEffect.builder().chance(effectChance).condition(SLEEP).build();
         }
         if (effectDto.getEffect().toLowerCase().contains("poisons the target")) {
-            return StatusEffect.POISON;
+            return StatusEffect.builder().chance(effectChance).condition(POISON).build();
         }
         if (effectDto.getEffect().toLowerCase().contains("badly poisons the target")) {
-            return StatusEffect.BADLY_POISONED;
+            return StatusEffect.builder().chance(effectChance).condition(BADLY_POISONED).build();
+
         }
         if (effectDto.getEffect().toLowerCase().contains("paralyzes the target")) {
-            return StatusEffect.PARALYZED;
+            return StatusEffect.builder().chance(effectChance).condition(PARALYZED).build();
         }
-        return StatusEffect.NONE;
+        if (effectDto.getEffect().toLowerCase().contains("has a $effect_chance% chance to burn the target.")) {
+            return StatusEffect.builder().chance(effectChance).condition(BURN).build();
+        }
+        return StatusEffect.builder().chance(effectChance).condition(NONE).build();
     }
 
     private HitTimes convertHitTimes(EffectDto effectDto) {

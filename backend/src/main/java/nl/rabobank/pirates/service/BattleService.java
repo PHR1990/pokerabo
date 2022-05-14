@@ -7,6 +7,7 @@ import nl.rabobank.pirates.model.battle.TurnActionType;
 import nl.rabobank.pirates.model.battle.TurnInformation;
 import nl.rabobank.pirates.model.common.Pokemon;
 import nl.rabobank.pirates.model.common.Stat;
+import nl.rabobank.pirates.model.common.Type;
 import nl.rabobank.pirates.model.move.Move;
 import nl.rabobank.pirates.model.move.StatusEffect;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static nl.rabobank.pirates.model.move.StatusEffect.Condition.BURN;
+import static nl.rabobank.pirates.model.move.StatusEffect.Condition.POISON;
 
 @Component
 public class BattleService {
@@ -85,13 +89,13 @@ public class BattleService {
 
         int damage = pokemon.getMaxHp()/8;
 
-        if (pokemon.isPokemonAfflictedBy(StatusEffect.BURN)) {
+        if (pokemon.isPokemonAfflictedBy(BURN)) {
 
             actions.add(TurnActionFactory.makeWithTextPokemonIsHurtByItsBurn(pokemon.getName(), target));
 
             actions.add(TurnActionFactory.makeDamageOnlyAnimation(damage,target));
 
-        } else if (pokemon.isPokemonAfflictedBy(StatusEffect.POISON)) {
+        } else if (pokemon.isPokemonAfflictedBy(POISON)) {
 
             actions.add(TurnActionFactory.makeWithTextPokemonIsHurtByPoison(pokemon.getName(), target));
 

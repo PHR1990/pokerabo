@@ -39,8 +39,9 @@ public class Pokemon {
         currentHp-=damage;
     }
 
-    public boolean isPokemonAfflictedBy(StatusEffect statusEffect) {
-        return statusEffects != null && statusEffects.contains(statusEffect);
+    public boolean isPokemonAfflictedBy(StatusEffect.Condition condition) {
+        return statusEffects != null &&
+                statusEffects.stream().anyMatch(statusEffect -> statusEffect.getCondition().equals(condition));
     }
 
     public int getStatAmount(Stat stat) {
