@@ -36,8 +36,7 @@ public interface MoveServiceConstants {
             "night-shade",
             "rest",
             "roar",
-            "recover",
-            "sing"
+            "recover"
     );
 
     List<String> MOVES_TO_PRIORITIZE_WHEN_BUILDING = Arrays.asList(

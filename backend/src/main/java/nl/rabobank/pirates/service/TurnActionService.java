@@ -1,18 +1,19 @@
 package nl.rabobank.pirates.service;
 
 import nl.rabobank.pirates.model.battle.TurnAction;
+import nl.rabobank.pirates.model.battle.TurnActionFactory;
 import nl.rabobank.pirates.model.battle.TurnActionType;
 import nl.rabobank.pirates.model.common.Pokemon;
 import nl.rabobank.pirates.model.common.Stat;
 import nl.rabobank.pirates.model.common.StatChange;
 import nl.rabobank.pirates.model.common.StatMultiplier;
-import nl.rabobank.pirates.model.move.HitTimes;
 import nl.rabobank.pirates.model.move.Move;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
+
+import static nl.rabobank.pirates.model.battle.TurnActionFactory.makeFaintAnimation;
 
 @Component
 public class TurnActionService {
@@ -50,18 +51,11 @@ public class TurnActionService {
             final List<TurnAction> actions, final Move pokemonMove, final int damage,
             final Pokemon attackingPokemon, final Pokemon defendingPokemon, boolean isOwnPokemonAttacking) {
 
+        TurnAction.Subject subjectAttackingPokemon = isOwnPokemonAttacking ? TurnAction.Subject.OWN : TurnAction.Subject.ENEMY;
 
-        actions.add(TurnAction.builder()
-                .text(buildPokemonUsedMove(attackingPokemon.getName(), pokemonMove.getName(), !isOwnPokemonAttacking))
-                .type(TurnActionType.TEXT_ONLY)
-                .build());
+        actions.add(TurnActionFactory.makePokemonUsedMove(attackingPokemon.getName().toUpperCase(), pokemonMove.getName(), subjectAttackingPokemon));
 
         if (!willMoveHit(pokemonMove, attackingPokemon, defendingPokemon)) {
-
-            actions.add(TurnAction.builder()
-                    .text("The attack missed!")
-                    .type(TurnActionType.TEXT_ONLY)
-                    .build());
 
             return;
         }
@@ -72,38 +66,23 @@ public class TurnActionService {
 
             defendingPokemon.dealDamage(damage);
 
-            TurnActionType targetPokemonAnimationType =
-                    isOwnPokemonAttacking ?
-                            TurnActionType.DAMAGE_ANIMATION_AGAINST_ENEMY:
-                            TurnActionType.DAMAGE_ANIMATION_AGAINST_OWN;
+            TurnAction.Subject subjectDefendingPokemon = isOwnPokemonAttacking ? TurnAction.Subject.ENEMY : TurnAction.Subject.OWN;
 
-            actions.add(TurnAction.builder()
-                    .type(targetPokemonAnimationType)
-                    .damage(damage)
-                    .build());
+            actions.add(TurnActionFactory.makeDamageOnlyAnimation(damage, subjectDefendingPokemon));
         }
 
         if (numberHits > 1) {
-            actions.add(TurnAction.builder()
-                    .text("Hit the enemy " + numberHits + " times!")
-                    .type(TurnActionType.TEXT_ONLY)
-                    .build());
+            actions.add(TurnActionFactory.makeTextOnly("Hit the enemy " + numberHits + " times!"));
         }
-
 
         if (defendingPokemon.getCurrentHp() <= 0) {
 
-            TurnActionType targetPokemonFaint =
+            TurnAction.Subject subjectDefendingPokemon =
                     isOwnPokemonAttacking ?
-                            TurnActionType.FAINT_ANIMATION_ENEMY_POKEMON :
-                            TurnActionType.FAINT_ANIMATION_OWN_POKEMON;
+                            TurnAction.Subject.ENEMY:
+                            TurnAction.Subject.OWN;
 
-            final String appendingMessage = isOwnPokemonAttacking ? "" : "Enemy ";
-            final String message = appendingMessage + defendingPokemon.getName() + " fainted!";
-            actions.add(TurnAction.builder()
-                        .type(targetPokemonFaint)
-                        .text(message)
-                    .build());
+            actions.add(makeFaintAnimation(defendingPokemon.getName().toUpperCase(), subjectDefendingPokemon));
         }
     }
 
@@ -117,27 +96,25 @@ public class TurnActionService {
     private void processStatusChangeClassAndAddIntoActions(final List<TurnAction> actions, final Move pokemonMove,
                                                            final Pokemon attackingPokemon, final Pokemon defendingPokemon, boolean isOwnPokemonAttacking) {
 
-        actions.add(TurnAction.builder()
-                .text(buildPokemonUsedMove(attackingPokemon.getName(), pokemonMove.getName(), !isOwnPokemonAttacking))
-                .type(TurnActionType.TEXT_ONLY)
-                .build());
+        TurnAction.Subject subjectAttackingPokemon =
+                isOwnPokemonAttacking ?
+                        TurnAction.Subject.OWN:
+                        TurnAction.Subject.ENEMY;
+
+        actions.add(
+                TurnActionFactory.makePokemonUsedMove(attackingPokemon.getName().toUpperCase(), pokemonMove.getName(), subjectAttackingPokemon));
 
         if (!willMoveHit(pokemonMove, attackingPokemon, defendingPokemon)) {
 
-            actions.add(TurnAction.builder()
-                    .text("The attack missed!")
-                    .type(TurnActionType.TEXT_ONLY)
-                    .build());
+            actions.add(TurnActionFactory.makeTextOnly("The attack missed!"));
 
             return;
         }
 
         for (StatChange statChange : pokemonMove.getStatChanges()) {
-            TurnActionType targetPokemonAnimationType;
             String text;
             if (statChange.getChangeAmount() > 0) {
 
-                targetPokemonAnimationType = TurnActionType.STAT_EFFECT_AGAINST_OWN;
                 boolean wasModified = attackingPokemon
                         .addStatMultiplier(StatMultiplier.builder().stat(statChange.getStat())
                                 .stageModification(statChange.getChangeAmount()).build());
@@ -149,7 +126,6 @@ public class TurnActionService {
                 }
 
             } else {
-                targetPokemonAnimationType = TurnActionType.STAT_EFFECT_AGAINST_ENEMY;
                 boolean wasModified = defendingPokemon
                         .addStatMultiplier(StatMultiplier.builder().stat(statChange.getStat())
                                 .stageModification(statChange.getChangeAmount()).build());
@@ -160,20 +136,15 @@ public class TurnActionService {
                 }
             }
 
-            actions.add(TurnAction.builder()
-                    .text(text)
-                    .type(TurnActionType.TEXT_ONLY)
-                    .build());
+            actions.add(TurnActionFactory.makeTextOnly(text));
         }
 
         if (pokemonMove.getStatusEffect() != null) {
             defendingPokemon.addStatusEffect(pokemonMove.getStatusEffect());
+
+            TurnAction.Subject subjectDefendingPokemon = isOwnPokemonAttacking ?  TurnAction.Subject.ENEMY : TurnAction.Subject.OWN;
+
+            actions.add(TurnActionFactory.makeStatusEffect(defendingPokemon.getStatusEffects().get(0), subjectDefendingPokemon));
         }
-
-    }
-
-    private String buildPokemonUsedMove(String pokemonName, String moveName, boolean shouldAppendIsFoeText) {
-        String prefix = shouldAppendIsFoeText ? "Foe " : "";
-        return prefix + pokemonName + " used " + moveName.toUpperCase();
     }
 }

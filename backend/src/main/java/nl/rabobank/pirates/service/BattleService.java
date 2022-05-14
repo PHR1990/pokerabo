@@ -2,6 +2,7 @@ package nl.rabobank.pirates.service;
 
 import lombok.Getter;
 import nl.rabobank.pirates.model.battle.TurnAction;
+import nl.rabobank.pirates.model.battle.TurnActionFactory;
 import nl.rabobank.pirates.model.battle.TurnActionType;
 import nl.rabobank.pirates.model.battle.TurnInformation;
 import nl.rabobank.pirates.model.common.Pokemon;
@@ -68,10 +69,7 @@ public class BattleService {
 
         if (areBothPokemonStillAlive()) {
 
-            actions.add(TurnAction.builder()
-                    .text("What will " + currentOwnPokemon.getName().toUpperCase() + " do?")
-                    .type(TurnActionType.TEXT_ONLY)
-                    .build());
+            actions.add(TurnActionFactory.makeWhatWillPokemonDo(currentOwnPokemon.getName()));
         }
 
         return TurnInformation.builder().actions(actions).build();
@@ -82,33 +80,22 @@ public class BattleService {
     }
 
     public void applyBurnOrPoison(Pokemon pokemon, List<TurnAction> actions) {
-        TurnActionType turnActionType
-                = pokemon == currentOwnPokemon ? TurnActionType.DAMAGE_ANIMATION_AGAINST_OWN : TurnActionType.DAMAGE_ANIMATION_AGAINST_ENEMY;
-        final String appendingString = pokemon == currentOwnPokemon ? "" : "The foe's ";
+
+        final TurnAction.Subject target = pokemon == currentEnemyPokemon ? TurnAction.Subject.ENEMY : TurnAction.Subject.OWN;
+
         int damage = pokemon.getMaxHp()/8;
 
         if (pokemon.isPokemonAfflictedBy(StatusEffect.BURN)) {
 
-            actions.add(TurnAction.builder()
-                    .text(appendingString + currentOwnPokemon.getName().toUpperCase() + " is hurt by its burn!")
-                    .type(TurnActionType.TEXT_ONLY)
-                    .build());
+            actions.add(TurnActionFactory.makeWithTextPokemonIsHurtByItsBurn(pokemon.getName(), target));
 
-            actions.add(TurnAction.builder()
-                    .damage(damage)
-                    .type(turnActionType)
-                    .build());
+            actions.add(TurnActionFactory.makeDamageOnlyAnimation(damage,target));
+
         } else if (pokemon.isPokemonAfflictedBy(StatusEffect.POISON)) {
-            actions.add(TurnAction.builder()
-                    .text(appendingString + currentOwnPokemon.getName().toUpperCase() + " is hurt by poison!")
-                    .type(TurnActionType.TEXT_ONLY)
-                    .build());
 
-            actions.add(TurnAction.builder()
-                    .text(appendingString + currentOwnPokemon.getName().toUpperCase() + " is hurt by poison!")
-                    .damage(damage)
-                    .type(turnActionType)
-                    .build());
+            actions.add(TurnActionFactory.makeWithTextPokemonIsHurtByPoison(pokemon.getName(), target));
+
+            actions.add(TurnActionFactory.makeDamageOnlyAnimation(damage, target));
         }
 
     }

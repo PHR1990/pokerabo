@@ -6,14 +6,14 @@
     </div>
 
     <span class="enemy-pokemon-text">
-      {{enemyPokemonData.name}}<br /> LV {{this.enemyPokemonLevel}}
+      {{enemyPokemonData.name}}<br /> LV {{this.enemyPokemonLevel}} {{this.enemyPokemonStatusEffect}}
     </span>
     <div class="enemy-pokemon-health-bar">
       <mat-progress-bar [value]="getEnemyPokemonCurrentHpAsPercentage()"></mat-progress-bar>
     </div>
 
     <span class="own-pokemon-text">
-      {{ownPokemonData.name}} <br /> LV {{this.ownPokemonLevel}}
+      {{ownPokemonData.name}} <br /> LV {{this.ownPokemonLevel}} {{this.ownPokemonStatusEffect}}
     </span>
     <div class="own-pokemon-health-bar">
       <mat-progress-bar [value]="getOwnPokemonCurrentHpAsPercentage()"></mat-progress-bar>

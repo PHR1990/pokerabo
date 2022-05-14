@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {PokemonService} from '../pokemon.service';
-import {Pokemon, TurnActionType, TurnInformation} from './pokemon.interface';
+import {Pokemon, StatusEffect, Subject, TurnActionType, TurnInformation} from './pokemon.interface';
 import {forkJoin} from 'rxjs';
 
 @Component({
@@ -27,6 +27,9 @@ export class SimulateComponent implements OnInit, OnDestroy {
 
   ownPokemonLevel = 5;
   enemyPokemonLevel = 5;
+
+  ownPokemonStatusEffect = '';
+  enemyPokemonStatusEffect = '';
 
   restartBattle = false;
 
@@ -80,18 +83,55 @@ export class SimulateComponent implements OnInit, OnDestroy {
         that.messagesLeftToDisplay--;
         if (action.type === TurnActionType.TEXT_ONLY) {
           that.text = action.text;
-        } else if (action.type === TurnActionType.DAMAGE_ANIMATION_AGAINST_OWN) {
-          that.ownPokemonData.currentHp -= action.damage;
-        } else if (action.type === TurnActionType.DAMAGE_ANIMATION_AGAINST_ENEMY) {
-          that.enemyPokemonData.currentHp -= action.damage;
-        } else if (action.type === TurnActionType.FAINT_ANIMATION_OWN_POKEMON ||
-          action.type === TurnActionType.FAINT_ANIMATION_ENEMY_POKEMON){
+        } else if (action.type === TurnActionType.DAMAGE_ANIMATION) {
+          if (action.subject === Subject.OWN) {
+            that.ownPokemonData.currentHp -= action.damage;
+          } else {
+            that.enemyPokemonData.currentHp -= action.damage;
+          }
+        } else if (action.type === TurnActionType.FAINT_ANIMATION) {
           that.text = action.text;
           this.restartBattle = true;
+        } else if (action.type === TurnActionType.STAT_EFFECT) {
+          if (action.subject === Subject.OWN) {
+            this.updateStatusEffectText(action.type, action.statusEffect, true);
+          } else {
+            this.updateStatusEffectText(action.type, action.statusEffect, false);
+          }
         }
-
       }, timeMultiplier * 750);
     });
+  }
+  updateStatusEffectText(turnActionType: TurnActionType, statusEffect: StatusEffect, isOwnPokemon: boolean) {
+    if (!turnActionType) {
+      return;
+    }
+    let text = '';
+
+    switch(statusEffect) {
+      case StatusEffect.POISON:
+        text = 'PSN';
+        break;
+      case StatusEffect.BURN:
+        text = 'BRN';
+        break;
+      case StatusEffect.PARALYZED:
+        text = 'PAR';
+        break;
+      case StatusEffect.SLEEP:
+        text = 'SLP';
+        break;
+      case StatusEffect.NONE:
+        text = ''
+        break;
+    }
+
+    if (isOwnPokemon) {
+      this.ownPokemonStatusEffect = text;
+    } else {
+      this.enemyPokemonStatusEffect = text;
+    }
+
   }
   updateEnemyPokemonHp(): Promise<void> {
     return this.pokemonService.getEnemyPokemon().then(pokeRes => {

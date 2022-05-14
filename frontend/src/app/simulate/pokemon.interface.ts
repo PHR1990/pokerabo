@@ -12,6 +12,12 @@ export interface Pokemon {
   backSpriteUrl: any;
   frontSpriteUrl: any;
   moves: Move[];
+  statusEffects:StatusEffect[]
+}
+
+export enum StatusEffect {
+  NONE = 'NONE', BURN = 'BURN', POISON = 'POISON', BADLY_POISONED = 'BADLY_POISONED', SLEEP = 'SLEEP', PARALYZED= 'PARALYZED'
+  , FROZEN= 'FROZEN', CONFUSED= 'CONFUSED', SEEDED = 'SEEDED'
 }
 
 export interface Move {
@@ -38,16 +44,19 @@ export interface TurnAction {
   text: string;
   damage: number;
   type: TurnActionType;
+  statusEffect: StatusEffect;
+  subject: Subject
+}
+
+export enum Subject {
+  NONE= 'NONE', OWN='OWN', ENEMY='ENEMY'
 }
 
 export enum TurnActionType {
   TEXT_ONLY = 'TEXT_ONLY',
-  DAMAGE_ANIMATION_AGAINST_OWN = 'DAMAGE_ANIMATION_AGAINST_OWN',
-  DAMAGE_ANIMATION_AGAINST_ENEMY = 'DAMAGE_ANIMATION_AGAINST_ENEMY' ,
-  STAT_EFFECT_AGAINST_OWN = 'STAT_EFFECT_AGAINST_OWN',
-  STAT_EFFECT_AGAINST_ENEMY = 'STAT_EFFECT_AGAINST_ENEMY',
-  FAINT_ANIMATION_OWN_POKEMON = 'FAINT_ANIMATION_OWN_POKEMON',
-  FAINT_ANIMATION_ENEMY_POKEMON = 'FAINT_ANIMATION_ENEMY_POKEMON'
+  DAMAGE_ANIMATION = 'DAMAGE_ANIMATION',
+  STAT_EFFECT = 'STAT_EFFECT',
+  FAINT_ANIMATION = 'FAINT_ANIMATION',
 }
 
 
