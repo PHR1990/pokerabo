@@ -2,9 +2,7 @@ package nl.rabobank.pirates.service;
 
 import nl.rabobank.pirates.client.pokemon.PokemonDto;
 import nl.rabobank.pirates.client.pokemon.StatDtoWrapper;
-import nl.rabobank.pirates.model.common.Pokemon;
 import nl.rabobank.pirates.model.move.HitTimes;
-import nl.rabobank.pirates.model.move.Move;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
@@ -30,9 +28,8 @@ public class CalculationService {
     public int calculateDamage(int level, int movePower, int attack, int defense) {
         if (movePower == 0) return 0;
 
-        int damage = Math.round(
+        return Math.round(
                 ((((level * 2)/5 + 2) * movePower * attack/defense)/50) + 2);
-        return damage;
     }
 
     public int calculateStat(int level, int baseStat) {
@@ -46,12 +43,12 @@ public class CalculationService {
         for (StatDtoWrapper statDtoWrapper : pokemonDto.getStats()) {
             if ("hp".equals(statDtoWrapper.getStat().getName())) {
                 return Math.round((float)Math.floor(
-                        0.01 * (2 * Integer.valueOf(statDtoWrapper.getBaseStat()) * level) + level + 10
+                        0.01 * (2 * statDtoWrapper.getBaseStat() * level) + level + 10
                 ));
             }
         }
 
-        throw new RuntimeException("HP BASE STAT WASNT FOUND");
+        throw new RuntimeException("HP BASE STAT WASN'T FOUND");
     }
 
     public int calculateNumberOfHitTimes(HitTimes hitTimes) {

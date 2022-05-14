@@ -31,7 +31,6 @@ public class TurnActionService {
                         attackingPokemon.getStatAmount(Stat.SPECIAL_ATTACK),
                         defendingPokemon.getStatAmount(Stat.SPECIAL_DEFENSE));
                 processDamageClassAndAddIntoActions(actions, pokemonMove, damage, attackingPokemon, defendingPokemon, isOwnPokemonAttacking);
-                break;
             }
             case PHYSICAL -> {
                 int damage = calculationService.calculateDamage(
@@ -39,12 +38,8 @@ public class TurnActionService {
                         attackingPokemon.getStatAmount(Stat.ATTACK),
                         defendingPokemon.getStatAmount(Stat.DEFENSE));
                 processDamageClassAndAddIntoActions(actions, pokemonMove, damage, attackingPokemon, defendingPokemon, isOwnPokemonAttacking);
-                break;
             }
-            case STATUS ->  {
-                processStatusChangeClassAndAddIntoActions(actions, pokemonMove, attackingPokemon, defendingPokemon, isOwnPokemonAttacking);
-                break;
-            }
+            case STATUS -> processStatusChangeClassAndAddIntoActions(actions, pokemonMove, attackingPokemon, defendingPokemon, isOwnPokemonAttacking);
         }
     }
 

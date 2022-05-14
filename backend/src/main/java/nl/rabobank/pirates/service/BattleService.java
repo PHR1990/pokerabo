@@ -3,13 +3,10 @@ package nl.rabobank.pirates.service;
 import lombok.Getter;
 import nl.rabobank.pirates.model.battle.TurnAction;
 import nl.rabobank.pirates.model.battle.TurnActionFactory;
-import nl.rabobank.pirates.model.battle.TurnActionType;
 import nl.rabobank.pirates.model.battle.TurnInformation;
 import nl.rabobank.pirates.model.common.Pokemon;
 import nl.rabobank.pirates.model.common.Stat;
-import nl.rabobank.pirates.model.common.Type;
 import nl.rabobank.pirates.model.move.Move;
-import nl.rabobank.pirates.model.move.StatusEffect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -48,10 +45,7 @@ public class BattleService {
         Move enemyPokemonMove = currentEnemyPokemon.getMoves().get(enemyPokemonMoveIndex);
 
         // Decide who goes first
-        boolean ownPokemonGoesFirst = false;
-        if (currentOwnPokemon.getStatAmount(Stat.SPEED) > currentEnemyPokemon.getStatAmount(Stat.SPEED)) {
-            ownPokemonGoesFirst = true;
-        }
+        boolean ownPokemonGoesFirst = currentOwnPokemon.getStatAmount(Stat.SPEED) > currentEnemyPokemon.getStatAmount(Stat.SPEED);
 
         if (ownPokemonGoesFirst) {
             turnActionService.processMoveAndAddToActions(actions, ownPokemonMove, currentOwnPokemon, currentEnemyPokemon, true);

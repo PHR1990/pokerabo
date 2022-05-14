@@ -20,10 +20,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class GetPokemonService {
 
-    private Map<String, PokemonDto> pokemonStorage = new ConcurrentHashMap<>();
+    private final Map<String, PokemonDto> pokemonStorage = new ConcurrentHashMap<>();
 
     @Getter
-    private AtomicInteger counter = new AtomicInteger(0);
+    private final AtomicInteger counter = new AtomicInteger(0);
 
     @Autowired
     private PokemonApiRestClient pokemonApiRestClient;

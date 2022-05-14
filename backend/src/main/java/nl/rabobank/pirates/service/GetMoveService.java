@@ -34,9 +34,9 @@ public class GetMoveService {
     @Autowired
     private PokemonApiRestClient pokemonApiRestClient;
 
-    private AtomicInteger counter = new AtomicInteger(0);
+    private final AtomicInteger counter = new AtomicInteger(0);
 
-    private Map<String, MoveDto> moveStorage = new ConcurrentHashMap<>();
+    private final Map<String, MoveDto> moveStorage = new ConcurrentHashMap<>();
 
     private static final String RED_BLUE_VERSION_GROUP = "red-blue";
 
@@ -124,35 +124,21 @@ public class GetMoveService {
                 .name(moveDto.getName())
                 .build();
         if (moveDto.getTarget() != null) {
-            Target target = Target.SELECTED_POKEMON;
-            switch (moveDto.getTarget().getName()) {
-
-                case "selected-pokemon":
-                    target = Target.SELECTED_POKEMON;
-                    break;
-                case "all-opponents":
-                    target = Target.SELECTED_POKEMON;
-                    break;
-                case "user":
-                    target = Target.USER;
-                    break;
-            }
+            Target target = switch (moveDto.getTarget().getName()) {
+                case "selected-pokemon", "all-opponents" -> Target.SELECTED_POKEMON;
+                case "user" -> Target.USER;
+                default -> throw new RuntimeException("unknown target" + moveDto.getTarget().getName());
+            };
             move = move.toBuilder().target(target).build();
         }
 
         if (moveDto.getDamageClass() != null) {
-            DamageClass damageClass = DamageClass.STATUS;
-            switch (moveDto.getDamageClass().getName()) {
-                case "physical":
-                    damageClass = DamageClass.PHYSICAL;
-                    break;
-                case "special":
-                    damageClass = DamageClass.SPECIAL;
-                    break;
-                case "status":
-                    damageClass = DamageClass.STATUS;
-                    break;
-            }
+            DamageClass damageClass = switch (moveDto.getDamageClass().getName()) {
+                case "physical" -> DamageClass.PHYSICAL;
+                case "special" -> DamageClass.SPECIAL;
+                case "status" -> DamageClass.STATUS;
+                default -> throw new RuntimeException("unknown damage class" + moveDto.getDamageClass().getName());
+            };
             move = move.toBuilder().damageClass(damageClass).build();
         }
 
