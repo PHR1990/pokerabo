@@ -20,18 +20,15 @@ public class PokemonController {
 
     @GetMapping(path="{pokemonName}/level/{level}", produces = "application/json")
     public Pokemon getPokemonByName(@PathVariable final String pokemonName, @PathVariable final int level) {
-        Pokemon pokemon = pokemonService.getPokemonByName(pokemonName, level);
-        return pokemon;
+        return pokemonService.getPokemonByName(pokemonName, level);
     }
     @PostMapping(path="/own-pokemon/{pokemonName}/level/{level}", produces = "application/json")
     public Pokemon chooseOwnPokemon(@PathVariable final String pokemonName, @PathVariable final int level) {
-        Pokemon pokemon = battleService.selectOwnPokemonByName(pokemonName, level);
-        return pokemon;
+        return battleService.selectOwnPokemonByName(pokemonName, level);
     }
     @PostMapping(path="/enemy-pokemon/{pokemonName}/level/{level}", produces = "application/json")
     public Pokemon chooseEnemyPokemon(@PathVariable final String pokemonName, @PathVariable final int level) {
-        Pokemon pokemon = battleService.selectEnemyPokemonByName(pokemonName, level);
-        return pokemon;
+        return battleService.selectEnemyPokemonByName(pokemonName, level);
     }
     @GetMapping(path="execute-turn", produces = "application/json")
     public TurnInformation executeTurn() {
@@ -39,12 +36,10 @@ public class PokemonController {
     }
     @GetMapping(path="/own-pokemon/", produces = "application/json")
     public Pokemon getSelectedOwnPokemon() {
-        Pokemon pokemon = battleService.getCurrentOwnPokemon();
-        return pokemon;
+        return battleService.getCurrentOwnPokemon();
     }
     @GetMapping(path="/enemy-pokemon/", produces = "application/json")
     public Pokemon getSelectedEnemyPokemon() {
-        Pokemon pokemon = battleService.getCurrentEnemyPokemon();
-        return pokemon;
+        return battleService.getCurrentEnemyPokemon();
     }
 }
