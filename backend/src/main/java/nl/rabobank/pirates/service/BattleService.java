@@ -63,10 +63,12 @@ public class BattleService {
         if (areBothPokemonStillAlive()) {
 
             applyBurnOrPoison(currentEnemyPokemon, actions);
+            // Apply seeding
             turnActionService.checkIfDefendingPokemonFaintedAndProcessFainting(currentEnemyPokemon, false, actions);
         }
         if (areBothPokemonStillAlive()) {
             applyBurnOrPoison(currentOwnPokemon, actions);
+            // Apply seeding
             turnActionService.checkIfDefendingPokemonFaintedAndProcessFainting(currentOwnPokemon, true, actions);
         }
 
@@ -104,7 +106,6 @@ public class BattleService {
 
             actions.add(TurnActionFactory.makeDamageOnlyAnimation(damage, target));
         }
-
     }
 
     public Pokemon selectOwnPokemonByName(final String pokemonName, final int level) {

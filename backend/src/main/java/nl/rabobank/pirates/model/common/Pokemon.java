@@ -9,6 +9,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static nl.rabobank.pirates.model.move.StatusEffect.Condition.PARALYZED;
+
 @Getter
 @Builder
 public class Pokemon {
@@ -33,15 +35,15 @@ public class Pokemon {
 
     private Type type;
 
-    private List<StatusEffect.Condition> statusEffects;
+    private List<StatusEffect.Condition> statusEffectConditions;
 
     public void dealDamage(int damage) {
         currentHp-=damage;
     }
 
     public boolean isPokemonAfflictedBy(StatusEffect.Condition condition) {
-        return statusEffects != null &&
-                statusEffects.stream().anyMatch(statusEffect -> statusEffect.equals(condition));
+        return statusEffectConditions != null &&
+                statusEffectConditions.stream().anyMatch(statusEffect -> statusEffect.equals(condition));
     }
 
     public int getStatAmount(Stat stat) {
@@ -66,9 +68,13 @@ public class Pokemon {
 
         for (StatAmount statAmount : stats) {
             if (stat.equals(statAmount.getStat())) {
-                return Math.round(
-                        statAmount.getAmount() * increaseModifier/decreaseModifier
-                );
+                int partialAmount = Math.round(statAmount.getAmount() * increaseModifier/decreaseModifier);
+
+                if (stat.equals(Stat.SPEED) && statusEffectConditions != null && statusEffectConditions.contains(PARALYZED)) {
+                    return Math.round(partialAmount * 0.25f);
+                }
+
+                return partialAmount;
             }
         }
         throw new RuntimeException("Couldnt find stat" + stat + " on pokemon" + getName());
@@ -86,12 +92,28 @@ public class Pokemon {
     }
 
     public boolean addStatusEffect(StatusEffect.Condition condition) {
-        if (statusEffects == null) {
-            statusEffects = new ArrayList<>();
+        if (statusEffectConditions == null) {
+            statusEffectConditions = new ArrayList<>();
         }
-        if (statusEffects.contains(condition)) return false;
+        if (StatusEffect.PRIMARY_CONDITIONS.contains(condition)) {
+            for (StatusEffect.Condition existingCondition : statusEffectConditions) {
+                if (StatusEffect.PRIMARY_CONDITIONS.contains(existingCondition)) {
+                    return false;
+                }
+            }
+        }
 
-        return statusEffects.add(condition);
+        if (StatusEffect.SECONDARY_CONDITIONS.contains(condition)) {
+            for (StatusEffect.Condition existingCondition : statusEffectConditions) {
+                if (StatusEffect.SECONDARY_CONDITIONS.contains(existingCondition)) {
+                    return false;
+                }
+            }
+        }
+
+        return statusEffectConditions.add(condition);
     }
+
+
 
 }

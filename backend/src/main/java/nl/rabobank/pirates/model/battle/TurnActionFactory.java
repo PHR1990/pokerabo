@@ -4,7 +4,7 @@ import nl.rabobank.pirates.model.move.StatusEffect;
 
 public class TurnActionFactory {
 
-    static final String WHAT_WILL_POKEMON_DO = "what will %s do?";
+    static final String WHAT_WILL_POKEMON_DO = "What will %s do?";
     static final String POKEMON_IS_HURT_BY_ITS_POISON = "%s is hurt by poison!";
     static final String POKEMON_IS_HURT_BY_ITS_BURN = "%s is hurt by its burn!";
     static final String POKEMON_FAINTED = "%s fainted!";
@@ -16,6 +16,9 @@ public class TurnActionFactory {
     static final String HIT_THE_ENEMY_TIMES = "Hit the enemy %d times!";
     static final String POKEMON_WAS_POISONED = "%s was poisoned!";
     static final String POKEMON_WAS_BURNED = "%s was burned!";
+    static final String POKEMON_WAS_PARALYZED = "%s was paralyzed!";
+    static final String POKEMON_IS_ASLEEP = "%s is fast asleep!";
+    static final String POKEMON_IS_FULLY_PARALYZED = "%s is fully paralyzed!";
 
     public static TurnAction makeWhatWillPokemonDo(final String pokemonName) {
         return TurnAction.builder()
@@ -95,7 +98,6 @@ public class TurnActionFactory {
 
     public static TurnAction makeStatusEffect(final String pokemonName, final StatusEffect.Condition statusEffectCondition, final TurnAction.Subject subject) {
 
-
         TurnAction turnAction = TurnAction.builder()
                 .statusEffectCondition(statusEffectCondition)
                 .subject(subject)
@@ -107,6 +109,12 @@ public class TurnActionFactory {
         }
         if (statusEffectCondition.equals(StatusEffect.Condition.BURN)) {
             turnAction = turnAction.toBuilder().text(String.format(POKEMON_WAS_BURNED, pokemonName)).build();
+        }
+        if (statusEffectCondition.equals(StatusEffect.Condition.PARALYZED)) {
+            turnAction = turnAction.toBuilder().text(String.format(POKEMON_WAS_PARALYZED, pokemonName)).build();
+        }
+        if (statusEffectCondition.equals(StatusEffect.Condition.SLEEP)) {
+            turnAction = turnAction.toBuilder().text(String.format(POKEMON_IS_ASLEEP, pokemonName)).build();
         }
         return turnAction;
     }
@@ -121,6 +129,18 @@ public class TurnActionFactory {
                 .type(TurnActionType.TEXT_ONLY)
                 .build();
     }
+
+    public static TurnAction makePokemonIsFullyParalyzed(String pokemonName) {
+
+        final String message = String.format(POKEMON_IS_FULLY_PARALYZED, pokemonName.toUpperCase());
+
+        return TurnAction.builder()
+                .text(message)
+                .type(TurnActionType.TEXT_ONLY)
+                .build();
+    }
+
+
 
     private static String appendableStringFoe(TurnAction.Subject subject) {
         return subject.equals(TurnAction.Subject.ENEMY) ? "Foe " : "";

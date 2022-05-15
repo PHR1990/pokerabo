@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import static nl.rabobank.pirates.model.battle.TurnActionFactory.makeFaintAnimation;
+import static nl.rabobank.pirates.model.move.StatusEffect.Condition.PARALYZED;
 
 @Component
 public class TurnActionService {
@@ -22,6 +23,11 @@ public class TurnActionService {
     private CalculationService calculationService;
 
     public void processMoveAndAddToActions(final List<TurnAction> actions, Move pokemonMove, Pokemon attackingPokemon, Pokemon defendingPokemon, boolean isOwnPokemonAttacking) {
+        // Check if pokemon awakes/freeze
+        // check confusion
+        if (!checkIfPokemonIsParalyzedAndCanAttack(attackingPokemon, actions)) {
+            return;
+        }
 
         switch (pokemonMove.getDamageClass()) {
             case SPECIAL -> {
@@ -34,6 +40,19 @@ public class TurnActionService {
             }
             case STATUS -> processStatusChangeClassAndAddIntoActions(actions, pokemonMove, attackingPokemon, defendingPokemon, isOwnPokemonAttacking);
         }
+    }
+
+    private boolean checkIfPokemonIsParalyzedAndCanAttack(final Pokemon attackingPokemon, final List<TurnAction> actions) {
+        if (attackingPokemon.getStatusEffectConditions() != null && attackingPokemon.getStatusEffectConditions().contains(PARALYZED)) {
+            boolean cantAttack = calculationService.isRollSuccessful(25);
+
+            if (cantAttack) {
+                actions.add(TurnActionFactory.makePokemonIsFullyParalyzed(attackingPokemon.getName()));
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void processDamageClassAndAddIntoActions(
@@ -113,11 +132,16 @@ public class TurnActionService {
             return;
         }
 
-        defendingPokemon.addStatusEffect(pokemonMove.getStatusEffect().getCondition());
+        boolean canApplyStatusEffect = defendingPokemon.addStatusEffect(pokemonMove.getStatusEffect().getCondition());
+
+        if (!canApplyStatusEffect) {
+            actions.add(TurnActionFactory.makeTextOnly("The attack missed!"));
+            return;
+        }
 
         TurnAction.Subject subjectDefendingPokemon = isOwnPokemonAttacking ?  TurnAction.Subject.ENEMY : TurnAction.Subject.OWN;
 
-        actions.add(TurnActionFactory.makeStatusEffect(defendingPokemon.getName(), defendingPokemon.getStatusEffects().get(0), subjectDefendingPokemon));
+        actions.add(TurnActionFactory.makeStatusEffect(defendingPokemon.getName(), defendingPokemon.getStatusEffectConditions().get(0), subjectDefendingPokemon));
 
     }
 
