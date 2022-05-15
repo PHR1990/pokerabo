@@ -2,7 +2,10 @@ package nl.rabobank.pirates.service;
 
 import nl.rabobank.pirates.client.pokemon.PokemonDto;
 import nl.rabobank.pirates.client.pokemon.StatDtoWrapper;
+import nl.rabobank.pirates.model.common.Pokemon;
+import nl.rabobank.pirates.model.common.Stat;
 import nl.rabobank.pirates.model.move.HitTimes;
+import nl.rabobank.pirates.model.move.Move;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
@@ -17,6 +20,10 @@ public class CalculationService {
         return random.ints(rangeStart, rangeEnd).findFirst().getAsInt();
     }
 
+    public boolean isRollSuccessful(int chance) {
+        return chance >= getRandomValue(0, 101);
+    }
+
     public boolean calculateAccuracyAndRollIfMoveHits(int pokemonAccuracy, int moveAccuracy) {
         int hitChance =  Math.round((float)pokemonAccuracy * ((float)moveAccuracy/100f));
 
@@ -25,7 +32,25 @@ public class CalculationService {
         return hitChance >= rangeRoll;
     }
 
-    public int calculateDamage(int level, int movePower, int attack, int defense) {
+    public int calculateSpecialDamage(final Pokemon attackingPokemon, final Pokemon defendingPokemon, final Move move) {
+        return calculateDamage(
+                attackingPokemon.getLevel(),
+                move.getPower(),
+                attackingPokemon.getStatAmount(Stat.SPECIAL_ATTACK),
+                defendingPokemon.getStatAmount(Stat.SPECIAL_DEFENSE)
+        );
+    }
+
+    public int calculatePhysicalDamage(final Pokemon attackingPokemon, final Pokemon defendingPokemon, final Move move) {
+        return calculateDamage(
+                attackingPokemon.getLevel(),
+                move.getPower(),
+                attackingPokemon.getStatAmount(Stat.ATTACK),
+                defendingPokemon.getStatAmount(Stat.DEFENSE)
+        );
+    }
+
+    int calculateDamage(int level, int movePower, int attack, int defense) {
         if (movePower == 0) return 0;
 
         return Math.round(

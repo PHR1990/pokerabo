@@ -33,7 +33,7 @@ public class Pokemon {
 
     private Type type;
 
-    private List<StatusEffect> statusEffects;
+    private List<StatusEffect.Condition> statusEffects;
 
     public void dealDamage(int damage) {
         currentHp-=damage;
@@ -41,7 +41,7 @@ public class Pokemon {
 
     public boolean isPokemonAfflictedBy(StatusEffect.Condition condition) {
         return statusEffects != null &&
-                statusEffects.stream().anyMatch(statusEffect -> statusEffect.getCondition().equals(condition));
+                statusEffects.stream().anyMatch(statusEffect -> statusEffect.equals(condition));
     }
 
     public int getStatAmount(Stat stat) {
@@ -85,13 +85,13 @@ public class Pokemon {
         return true;
     }
 
-    public boolean addStatusEffect(StatusEffect statusEffect) {
+    public boolean addStatusEffect(StatusEffect.Condition condition) {
         if (statusEffects == null) {
             statusEffects = new ArrayList<>();
         }
-        if (statusEffects.contains(statusEffect)) return false;
+        if (statusEffects.contains(condition)) return false;
 
-        return statusEffects.add(statusEffect);
+        return statusEffects.add(condition);
     }
 
 }

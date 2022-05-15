@@ -61,8 +61,13 @@ public class BattleService {
         }
 
         if (areBothPokemonStillAlive()) {
+
             applyBurnOrPoison(currentEnemyPokemon, actions);
+            turnActionService.checkIfDefendingPokemonFaintedAndProcessFainting(currentEnemyPokemon, false, actions);
+        }
+        if (areBothPokemonStillAlive()) {
             applyBurnOrPoison(currentOwnPokemon, actions);
+            turnActionService.checkIfDefendingPokemonFaintedAndProcessFainting(currentOwnPokemon, true, actions);
         }
 
         if (areBothPokemonStillAlive()) {
@@ -82,7 +87,7 @@ public class BattleService {
         final TurnAction.Subject target = pokemon == currentEnemyPokemon ? TurnAction.Subject.ENEMY : TurnAction.Subject.OWN;
 
         int damage = pokemon.getMaxHp()/8;
-
+        pokemon.dealDamage(damage);
         if (pokemon.isPokemonAfflictedBy(BURN)) {
 
             actions.add(TurnActionFactory.makeWithTextPokemonIsHurtByItsBurn(pokemon.getName(), target));

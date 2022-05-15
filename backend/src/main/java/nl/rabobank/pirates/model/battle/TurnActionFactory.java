@@ -14,6 +14,8 @@ public class TurnActionFactory {
     static final String POKEMON_STAT_FELL = "%s %s fell!";
     static final String POKEMON_STAT_WONT_GO_ANY_LOWER = "%s %s won't go any lower!";
     static final String HIT_THE_ENEMY_TIMES = "Hit the enemy %d times!";
+    static final String POKEMON_WAS_POISONED = "%s was poisoned!";
+    static final String POKEMON_WAS_BURNED = "%s was burned!";
 
     public static TurnAction makeWhatWillPokemonDo(final String pokemonName) {
         return TurnAction.builder()
@@ -91,12 +93,22 @@ public class TurnActionFactory {
                 .build();
     }
 
-    public static TurnAction makeStatusEffect(final StatusEffect statusEffect, final TurnAction.Subject subject) {
-        return TurnAction.builder()
-                .statusEffect(statusEffect)
+    public static TurnAction makeStatusEffect(final String pokemonName, final StatusEffect.Condition statusEffectCondition, final TurnAction.Subject subject) {
+
+
+        TurnAction turnAction = TurnAction.builder()
+                .statusEffectCondition(statusEffectCondition)
                 .subject(subject)
                 .type(TurnActionType.STAT_EFFECT)
                 .build();
+
+        if (statusEffectCondition.equals(StatusEffect.Condition.POISON)) {
+            turnAction = turnAction.toBuilder().text(String.format(POKEMON_WAS_POISONED, pokemonName)).build();
+        }
+        if (statusEffectCondition.equals(StatusEffect.Condition.BURN)) {
+            turnAction = turnAction.toBuilder().text(String.format(POKEMON_WAS_BURNED, pokemonName)).build();
+        }
+        return turnAction;
     }
 
     public static TurnAction makePokemonUsedMove(String pokemonName, String moveName, TurnAction.Subject subject) {

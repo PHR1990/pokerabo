@@ -48,7 +48,7 @@ export interface TurnAction {
   text: string;
   damage: number;
   type: TurnActionType;
-  statusEffect: StatusEffect;
+  statusEffectCondition: Condition;
   subject: Subject
 }
 

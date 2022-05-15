@@ -176,7 +176,6 @@ public class GetMoveService {
         }
         if (effectDto.getEffect().toLowerCase().contains("badly poisons the target")) {
             return StatusEffect.builder().chance(effectChance).condition(BADLY_POISONED).build();
-
         }
         if (effectDto.getEffect().toLowerCase().contains("paralyzes the target")) {
             return StatusEffect.builder().chance(effectChance).condition(PARALYZED).build();
@@ -184,8 +183,15 @@ public class GetMoveService {
         if (effectDto.getEffect().toLowerCase().contains("has a $effect_chance% chance to burn the target.")) {
             return StatusEffect.builder().chance(effectChance).condition(BURN).build();
         }
+        if (effectDto.getEffect().toLowerCase().contains("has a $effect_chance% chance to poison the target.")) {
+            return StatusEffect.builder().chance(effectChance).condition(POISON).build();
+        }
+
+
         return StatusEffect.builder().chance(effectChance).condition(NONE).build();
     }
+    // TODO need to do the same for STATS, moves like bubble-beam and psychic affect status with a chance
+    // TODO need to also consider that some moves may increase status as a secondary effect
 
     private HitTimes convertHitTimes(EffectDto effectDto) {
         if (effectDto.getEffect().toLowerCase().contains("hits 2–5 times in one turn")) {

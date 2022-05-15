@@ -56,7 +56,7 @@ public class GetPokemonService {
                 .moves(moveService.getFourRandomMoves(pokemonDto, level))
                 .type(Type.valueOfLabel(pokemonDto.getTypes().get(0).getType().getName()))
                 .level(level)
-                .build();
+            .build();
     }
 
     private List<StatAmount> convertAndCalculateToStatsAmount(List<StatDtoWrapper> statDtoWrapperList, int level) {

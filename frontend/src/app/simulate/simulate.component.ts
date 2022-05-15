@@ -84,7 +84,7 @@ export class SimulateComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         that.messagesLeftToDisplay--;
         if (action.type === TurnActionType.TEXT_ONLY) {
-          that.text = action.text;
+
         } else if (action.type === TurnActionType.DAMAGE_ANIMATION) {
           if (action.subject === Subject.OWN) {
             that.ownPokemonData.currentHp -= action.damage;
@@ -92,14 +92,16 @@ export class SimulateComponent implements OnInit, OnDestroy {
             that.enemyPokemonData.currentHp -= action.damage;
           }
         } else if (action.type === TurnActionType.FAINT_ANIMATION) {
-          that.text = action.text;
           this.restartBattle = true;
         } else if (action.type === TurnActionType.STAT_EFFECT) {
           if (action.subject === Subject.OWN) {
-            this.updateStatusEffectText(action.type, action.statusEffect.condition, true);
+            this.updateStatusEffectText(action.type, action.statusEffectCondition, true);
           } else {
-            this.updateStatusEffectText(action.type, action.statusEffect.condition, false);
+            this.updateStatusEffectText(action.type, action.statusEffectCondition, false);
           }
+        }
+        if (action.text && action.text.length > 0) {
+          this.text = action.text;
         }
       }, timeMultiplier * 750);
     });
