@@ -40,9 +40,7 @@ public class TurnActionService {
             final List<TurnAction> actions, final Move pokemonMove, final int damage,
             final Pokemon attackingPokemon, final Pokemon defendingPokemon, boolean isOwnPokemonAttacking) {
 
-        TurnAction.Subject subjectAttackingPokemon = isOwnPokemonAttacking ? TurnAction.Subject.OWN : TurnAction.Subject.ENEMY;
-
-        actions.add(TurnActionFactory.makePokemonUsedMove(attackingPokemon.getName().toUpperCase(), pokemonMove.getName(), subjectAttackingPokemon));
+        addToActionsPokemonUsedMove(attackingPokemon, pokemonMove, actions, isOwnPokemonAttacking);
 
         if (!willMoveHit(pokemonMove, attackingPokemon, defendingPokemon)) {
             actions.add(TurnActionFactory.makeTextOnly("The attack missed!"));
@@ -58,40 +56,33 @@ public class TurnActionService {
 
         processDamageClassSecondaryMoveEffect(defendingPokemon, pokemonMove, isOwnPokemonAttacking, actions);
     }
-
-    private void processDamageClassSecondaryMoveEffect(final Pokemon defendingPokemon, final Move move, boolean isOwnPokemonAttacking, final List<TurnAction> actions) {
-        if (move.getStatusEffect() != null) {
-            if (move.getStatusEffect().getCondition().equals(StatusEffect.Condition.BURN)) {
-                boolean isSuccessful = calculationService.isRollSuccessful(move.getStatusEffect().getChance());
-
-                if (isSuccessful) {
-                    defendingPokemon.addStatusEffect(StatusEffect.Condition.BURN);
-
-                    TurnAction.Subject subjectDefendingPokemon = isOwnPokemonAttacking ?  TurnAction.Subject.ENEMY : TurnAction.Subject.OWN;
-
-                    actions.add(TurnActionFactory.makeStatusEffect(defendingPokemon.getName(), defendingPokemon.getStatusEffects().get(0), subjectDefendingPokemon));
-                }
-            }
-        }
-
-    }
-
+    
     private void processStatusChangeClassAndAddIntoActions(final List<TurnAction> actions, final Move pokemonMove,
                                                            final Pokemon attackingPokemon, final Pokemon defendingPokemon, boolean isOwnPokemonAttacking) {
-
-        TurnAction.Subject subjectAttackingPokemon =
-                isOwnPokemonAttacking ?
-                        TurnAction.Subject.OWN:
-                        TurnAction.Subject.ENEMY;
-
-        actions.add(
-                TurnActionFactory.makePokemonUsedMove(attackingPokemon.getName().toUpperCase(), pokemonMove.getName(), subjectAttackingPokemon));
+        
+        addToActionsPokemonUsedMove(attackingPokemon, pokemonMove, actions, isOwnPokemonAttacking);
 
         if (!willMoveHit(pokemonMove, attackingPokemon, defendingPokemon)) {
             actions.add(TurnActionFactory.makeTextOnly("The attack missed!"));
             return;
         }
 
+        processMoveStatChanges(attackingPokemon, defendingPokemon, pokemonMove, actions);
+
+        processMoveStatusEffect(defendingPokemon, pokemonMove, actions, isOwnPokemonAttacking);
+    }
+
+    private void processMoveStatusEffect(final Pokemon defendingPokemon, final Move pokemonMove, final List<TurnAction> actions, boolean isOwnPokemonAttacking) {
+        if (pokemonMove.getStatusEffect() != null) {
+            defendingPokemon.addStatusEffect(pokemonMove.getStatusEffect().getCondition());
+
+            TurnAction.Subject subjectDefendingPokemon = isOwnPokemonAttacking ?  TurnAction.Subject.ENEMY : TurnAction.Subject.OWN;
+
+            actions.add(TurnActionFactory.makeStatusEffect(defendingPokemon.getName(), defendingPokemon.getStatusEffects().get(0), subjectDefendingPokemon));
+        }
+    }
+
+    private void processMoveStatChanges(final Pokemon attackingPokemon, final Pokemon defendingPokemon, final Move pokemonMove, final List<TurnAction> actions) {
         for (StatChange statChange : pokemonMove.getStatChanges()) {
 
             if (statChange.getChangeAmount() > 0) {
@@ -121,16 +112,25 @@ public class TurnActionService {
             }
 
         }
-
-        if (pokemonMove.getStatusEffect() != null) {
-            defendingPokemon.addStatusEffect(pokemonMove.getStatusEffect().getCondition());
-
-            TurnAction.Subject subjectDefendingPokemon = isOwnPokemonAttacking ?  TurnAction.Subject.ENEMY : TurnAction.Subject.OWN;
-
-            actions.add(TurnActionFactory.makeStatusEffect(defendingPokemon.getName(), defendingPokemon.getStatusEffects().get(0), subjectDefendingPokemon));
-        }
     }
 
+    private void processDamageClassSecondaryMoveEffect(final Pokemon defendingPokemon, final Move move, boolean isOwnPokemonAttacking, final List<TurnAction> actions) {
+        if (move.getStatusEffect() != null) {
+            if (move.getStatusEffect().getCondition().equals(StatusEffect.Condition.BURN)) {
+                boolean isSuccessful = calculationService.isRollSuccessful(move.getStatusEffect().getChance());
+
+                if (isSuccessful) {
+                    defendingPokemon.addStatusEffect(StatusEffect.Condition.BURN);
+
+                    TurnAction.Subject subjectDefendingPokemon = isOwnPokemonAttacking ?  TurnAction.Subject.ENEMY : TurnAction.Subject.OWN;
+
+                    actions.add(TurnActionFactory.makeStatusEffect(defendingPokemon.getName(), defendingPokemon.getStatusEffects().get(0), subjectDefendingPokemon));
+                }
+            }
+        }
+
+    }
+    
     private void checkNumberOfHitsAndProcessNumberOfHits(final Move pokemonMove, final Pokemon defendingPokemon, final boolean isOwnPokemonAttacking, final int damage, final List<TurnAction> actions) {
         int numberHits = calculationService.calculateNumberOfHitTimes(pokemonMove.getHitTimes());
 
@@ -167,5 +167,15 @@ public class TurnActionService {
         int pokemonAccuracy = attackingPokemon.getStatAmount(Stat.ACCURACY);
 
         return calculationService.calculateAccuracyAndRollIfMoveHits(pokemonAccuracy, moveAccuracy);
+    }
+
+    private void addToActionsPokemonUsedMove(final Pokemon attackingPokemon, final Move pokemonMove, final List<TurnAction> actions, final boolean isOwnPokemonAttacking) {
+        TurnAction.Subject subjectAttackingPokemon =
+                isOwnPokemonAttacking ?
+                        TurnAction.Subject.OWN:
+                        TurnAction.Subject.ENEMY;
+
+        actions.add(
+                TurnActionFactory.makePokemonUsedMove(attackingPokemon.getName().toUpperCase(), pokemonMove.getName(), subjectAttackingPokemon));
     }
 }
