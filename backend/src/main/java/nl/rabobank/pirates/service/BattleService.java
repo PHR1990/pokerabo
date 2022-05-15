@@ -86,15 +86,19 @@ public class BattleService {
 
         final TurnAction.Subject target = pokemon == currentEnemyPokemon ? TurnAction.Subject.ENEMY : TurnAction.Subject.OWN;
 
-        int damage = pokemon.getMaxHp()/8;
-        pokemon.dealDamage(damage);
         if (pokemon.isPokemonAfflictedBy(BURN)) {
+
+            int damage = pokemon.getMaxHp()/8;
+            pokemon.dealDamage(damage);
 
             actions.add(TurnActionFactory.makeWithTextPokemonIsHurtByItsBurn(pokemon.getName(), target));
 
             actions.add(TurnActionFactory.makeDamageOnlyAnimation(damage,target));
 
         } else if (pokemon.isPokemonAfflictedBy(POISON)) {
+
+            int damage = pokemon.getMaxHp()/8;
+            pokemon.dealDamage(damage);
 
             actions.add(TurnActionFactory.makeWithTextPokemonIsHurtByPoison(pokemon.getName(), target));
 
