@@ -11,15 +11,8 @@ class PokeRaboApplicationTests {
 	@Autowired
 	private GetPokemonService plateService;
 
-
 	@Test
 	void contextLoads() {
 
 	}
-
-	@Test
-	void createPlate() {
-
-	}
-
 }

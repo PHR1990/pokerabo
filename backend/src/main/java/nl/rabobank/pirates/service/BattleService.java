@@ -28,6 +28,9 @@ public class BattleService {
     @Autowired
     private CalculationService calculationService;
 
+    @Autowired
+    private RollService rollService;
+
     @Getter
     private Pokemon currentOwnPokemon;
 
@@ -39,8 +42,8 @@ public class BattleService {
 
         List<TurnAction> actions = new ArrayList<>();
         
-        int ownPokemonMoveIndex = calculationService.getRandomValue(0, currentOwnPokemon.getMoves().size());
-        int enemyPokemonMoveIndex = calculationService.getRandomValue(0, currentEnemyPokemon.getMoves().size());
+        int ownPokemonMoveIndex = rollService.getRandomValue(0, currentOwnPokemon.getMoves().size());
+        int enemyPokemonMoveIndex = rollService.getRandomValue(0, currentEnemyPokemon.getMoves().size());
         Move ownPokemonMove = currentOwnPokemon.getMoves().get(ownPokemonMoveIndex);
         Move enemyPokemonMove = currentEnemyPokemon.getMoves().get(enemyPokemonMoveIndex);
 

@@ -6,30 +6,23 @@ import nl.rabobank.pirates.model.common.Pokemon;
 import nl.rabobank.pirates.model.common.Stat;
 import nl.rabobank.pirates.model.move.HitTimes;
 import nl.rabobank.pirates.model.move.Move;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Random;
 
 @Component
 public class CalculationService {
 
-    final static Random random = new Random();
-
-    public int getRandomValue(int rangeStart, int rangeEnd) {
-
-        return random.ints(rangeStart, rangeEnd).findFirst().getAsInt();
-    }
+    @Autowired
+    private RollService rollService;
 
     public boolean isRollSuccessful(int chance) {
-        return chance >= getRandomValue(0, 101);
+        return rollService.isRollSuccessful(chance);
     }
 
     public boolean calculateAccuracyAndRollIfMoveHits(int pokemonAccuracy, int moveAccuracy) {
         int hitChance =  Math.round((float)pokemonAccuracy * ((float)moveAccuracy/100f));
 
-        int rangeRoll = getRandomValue(0, 101);
-
-        return hitChance >= rangeRoll;
+        return rollService.isRollSuccessful(hitChance);
     }
 
     public int calculateSpecialDamage(final Pokemon attackingPokemon, final Pokemon defendingPokemon, final Move move) {
@@ -63,22 +56,17 @@ public class CalculationService {
         ));
     }
 
-    public int calculateMaxHp(int level, PokemonDto pokemonDto) {
+    public int calculateMaxHp(int level, final int baseHpStat) {
 
-        for (StatDtoWrapper statDtoWrapper : pokemonDto.getStats()) {
-            if ("hp".equals(statDtoWrapper.getStat().getName())) {
-                return Math.round((float)Math.floor(
-                        0.01 * (2 * statDtoWrapper.getBaseStat() * level) + level + 10
-                ));
-            }
-        }
+        return Math.round((float)Math.floor(
+                0.01 * (2 * baseHpStat * level) + level + 10
+        ));
 
-        throw new RuntimeException("HP BASE STAT WASN'T FOUND");
     }
 
     public int calculateNumberOfHitTimes(HitTimes hitTimes) {
         if (hitTimes.equals(HitTimes.TWO_TO_FIVE)) {
-            int diceRoll = this.getRandomValue(0, 101);
+            int diceRoll = rollService.getRandomValue(0, 101);
 
             if (diceRoll < 37) return 2;
             if (diceRoll > 37 && diceRoll < 75) return 3;

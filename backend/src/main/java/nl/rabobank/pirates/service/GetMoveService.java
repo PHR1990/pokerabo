@@ -34,6 +34,9 @@ public class GetMoveService {
     @Autowired
     private PokemonApiRestClient pokemonApiRestClient;
 
+    @Autowired
+    private RollService rollService;
+
     private final AtomicInteger counter = new AtomicInteger(0);
 
     private final Map<String, MoveDto> moveStorage = new ConcurrentHashMap<>();
@@ -80,7 +83,7 @@ public class GetMoveService {
         }
         // Query each move to build the combination of four
         while (moves.size() < 4) {
-            int randomNumber = calculationService.getRandomValue(0, allPossibleMoves.size()-1);
+            int randomNumber = rollService.getRandomValue(0, allPossibleMoves.size()-1);
             ThinMoveDto randomizedMove = allPossibleMoves.get(randomNumber);
             moves.add(getMoveByName(randomizedMove.getName()));
             allPossibleMoves.remove(randomNumber);
@@ -97,7 +100,8 @@ public class GetMoveService {
 
         for (VersionGroupDetailsDto versionGroupDetailsDto : thinMoveWrapperDto.getVersionGroupDetails()) {
             if (RED_BLUE_VERSION_GROUP.equals(versionGroupDetailsDto.getVersionGroup().getName())) {
-                if (versionGroupDetailsDto.getLevelLearnedAt() > 0 && versionGroupDetailsDto.getLevelLearnedAt() <= level) {
+                if (isMoveLearnedWithoutLevel(versionGroupDetailsDto) &&
+                        versionGroupDetailsDto.getLevelLearnedAt() <= level) {
                     isMoveAllowed = true;
                 } else {
                     return false;
@@ -107,6 +111,10 @@ public class GetMoveService {
         }
 
         return isMoveAllowed;
+    }
+
+    private boolean isMoveLearnedWithoutLevel(VersionGroupDetailsDto versionGroupDetailsDto) {
+        return versionGroupDetailsDto.getLevelLearnedAt() > 0;
     }
 
     private List<Move> convertToMoves(List<MoveDto> moveDtoList) {
@@ -125,9 +133,9 @@ public class GetMoveService {
                 .build();
         if (moveDto.getTarget() != null) {
             Target target = switch (moveDto.getTarget().getName()) {
-                case "selected-pokemon", "all-opponents" -> Target.SELECTED_POKEMON;
-                case "user" -> Target.USER;
-                default -> throw new RuntimeException("unknown target" + moveDto.getTarget().getName());
+                case "selected-pokemon", "all-opponents", "all-other-pokemon", "random-opponent" -> Target.SELECTED_POKEMON;
+                case "user", "users-field" -> Target.USER;
+                default -> throw new RuntimeException("unknown target" + moveDto.getTarget().getName() + " move = " + moveDto.getName());
             };
             move = move.toBuilder().target(target).build();
         }

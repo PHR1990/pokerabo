@@ -6,41 +6,38 @@ import java.util.List;
 public interface MoveServiceConstants {
     List<String> PROHIBITED_MOVES
             = Arrays.asList(
-            "double-team",
-            "leech-seed",
+            "double-team",  // Needs accuracy
             "rage",
             "focus-energy",
-            "metronome",
-            "dig",
+            "metronome",    // Possible but very niche
+            "dig",          // Needs to implement immunity and 2 turn attacks
             "hyper-beam",
-            "amnesia",
+            "amnesia",      // needs to be specially tested
             "clamp",
             "bind",
-            "bide",
-            "confure-ray",
-            "disable",
-            "dream-eater",
-            "explosion",
+            "bide",         // Very niche, no reason to implement
+            "confure-ray",  // Just requires confusion
+            "disable",      // Annoying to implement
+            "dream-eater",  // Needs sleep
+            "explosion",    // A bit useless in a simulation
             "fissure",
             "glare",
             "guilliotine",
             "haze",
             "horn-drill",
             "leech-life",
-            "leech-seed",
-            "lovely-kiss",
+            "leech-seed", // Seeded condition
             "light-screen",
-            "mimic",
-            "minimize",
+            "mimic",    // Improbable to implement
+            "minimize", // Need to implement evasion
             "mist",
-            "night-shade",
-            "rest",
-            "roar",
+            "night-shade", // Flat amount on HP
+            "rest", // Special type of sleep
+            "roar", // No reason to implement
             "recover",
-            "poison-powder",
-            "confusion",
-            "double-slap",
-            "growl"
+            "whirlwind",
+            "reflect",
+            "counter"
     );
 
     List<String> MOVES_TO_PRIORITIZE_WHEN_BUILDING = Arrays.asList(

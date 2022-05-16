@@ -44,7 +44,7 @@ public class GetPokemonService {
         }
         pokemonStorage.put(pokemonName, pokemonDto);
 
-        final int maxHp = calculationService.calculateMaxHp(level, pokemonDto);
+        final int maxHp = calculationService.calculateMaxHp(level, getHpStatFromPokemonDto(pokemonDto));
 
         return Pokemon.builder()
                 .name(pokemonDto.getName().toUpperCase())
@@ -76,6 +76,15 @@ public class GetPokemonService {
         statAmountList.add(StatAmount.builder().stat(Stat.EVASION).amount(100).build());
 
         return statAmountList;
+    }
+
+    private int getHpStatFromPokemonDto(PokemonDto pokemonDto) {
+        for (StatDtoWrapper statDtoWrapper : pokemonDto.getStats()) {
+            if ("hp".equals(statDtoWrapper.getStat().getName())) {
+                return statDtoWrapper.getBaseStat();
+            }
+        }
+        throw new RuntimeException("HP COULDNT BE FOUND ON POKEMON DTO NAME=" + pokemonDto.getName());
     }
 
 }
