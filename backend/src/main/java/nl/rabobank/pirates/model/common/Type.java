@@ -15,7 +15,9 @@ public enum Type {
     POISON("poison"),
     GROUND("ground"),
     ROCK("rock"),
-    ICE("ice");
+    ICE("ice"),
+    GHOST("ghost"),
+    DRAGON("dragon");
 
     private final String label;
 
