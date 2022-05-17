@@ -78,4 +78,8 @@ public class CalculationService {
 
         return 1;
     }
+
+    public int calculateSleepTurns() {
+        return rollService.getRandomValue(2,6);
+    }
 }

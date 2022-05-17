@@ -222,7 +222,6 @@ export class SimulateComponent implements OnInit, OnDestroy {
   private updateMessageUponNewPokemonSelection(pokemonIndex) {
     this.text = 'selected pokemon will be ' + this.possiblePokemon[pokemonIndex];
   }
-
   ngOnDestroy(): void {
   }
 }

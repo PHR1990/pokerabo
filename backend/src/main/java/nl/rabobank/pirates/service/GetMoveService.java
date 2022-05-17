@@ -43,8 +43,6 @@ public class GetMoveService {
 
     private static final String RED_BLUE_VERSION_GROUP = "red-blue";
 
-
-    // Status effects are all missing for now
     // Create a move set builder, find moves that would make sense for a particular pokemon.
 
     // Round robin from lowest level to highest

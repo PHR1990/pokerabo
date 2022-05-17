@@ -2,6 +2,7 @@ package nl.rabobank.pirates.model.common;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import nl.rabobank.pirates.model.move.Move;
 import nl.rabobank.pirates.model.move.StatusEffect;
 
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static nl.rabobank.pirates.model.move.StatusEffect.Condition.PARALYZED;
+import static nl.rabobank.pirates.model.move.StatusEffect.Condition.SLEEP;
 
 @Getter
 @Builder
@@ -36,6 +38,8 @@ public class Pokemon {
     private Type type;
 
     private List<StatusEffect.Condition> statusEffectConditions;
+
+    private int sleepCounter;
 
     public void dealDamage(int damage) {
         currentHp-=damage;
@@ -114,6 +118,21 @@ public class Pokemon {
         return statusEffectConditions.add(condition);
     }
 
+    public void putPokemonToSleep(int turnsAsleep) {
+        addStatusEffect(SLEEP);
+        sleepCounter = turnsAsleep;
+    }
 
+    public int decrementSleepCounterAndReturn() {
+        if (sleepCounter > 0){
+            sleepCounter--;
+        }
+        if (sleepCounter == 0) {
+            statusEffectConditions.remove(SLEEP);
+        }
+
+
+        return sleepCounter;
+    }
 
 }

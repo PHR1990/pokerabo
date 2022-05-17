@@ -15,6 +15,7 @@ import java.util.List;
 
 import static nl.rabobank.pirates.model.battle.TurnActionFactory.makeFaintAnimation;
 import static nl.rabobank.pirates.model.move.StatusEffect.Condition.PARALYZED;
+import static nl.rabobank.pirates.model.move.StatusEffect.Condition.SLEEP;
 
 @Component
 public class TurnActionService {
@@ -26,6 +27,9 @@ public class TurnActionService {
         // Check if pokemon awakes/freeze
         // check confusion
         if (!checkIfPokemonIsParalyzedAndCanAttack(attackingPokemon, actions)) {
+            return;
+        }
+        if (!checkIfPokemonIsAsleepAndDecrementCounter(attackingPokemon, actions, isOwnPokemonAttacking)) {
             return;
         }
 
@@ -43,7 +47,7 @@ public class TurnActionService {
     }
 
     private boolean checkIfPokemonIsParalyzedAndCanAttack(final Pokemon attackingPokemon, final List<TurnAction> actions) {
-        if (attackingPokemon.getStatusEffectConditions() != null && attackingPokemon.getStatusEffectConditions().contains(PARALYZED)) {
+        if (attackingPokemon.isPokemonAfflictedBy(PARALYZED)) {
             boolean cantAttack = calculationService.isRollSuccessful(25);
 
             if (cantAttack) {
@@ -52,6 +56,23 @@ public class TurnActionService {
             }
         }
 
+        return true;
+    }
+
+    private boolean checkIfPokemonIsAsleepAndDecrementCounter(final Pokemon attackingPokemon, final List<TurnAction> actions, boolean isOwnPokemonAttacking) {
+        if (attackingPokemon.isPokemonAfflictedBy(SLEEP)) {
+            if (attackingPokemon.decrementSleepCounterAndReturn() > 0) {
+                actions.add(TurnActionFactory.makePokemonIsAsleep(attackingPokemon.getName()));
+                return false;
+            }
+
+            TurnAction.Subject subjectAttackingPokemon =
+                    isOwnPokemonAttacking ?
+                            TurnAction.Subject.OWN:
+                            TurnAction.Subject.ENEMY;
+
+            actions.add(TurnActionFactory.makePokemonWokeUp(attackingPokemon.getName(), subjectAttackingPokemon));
+        }
         return true;
     }
 
@@ -85,7 +106,6 @@ public class TurnActionService {
             actions.add(TurnActionFactory.makeTextOnly("The attack missed!"));
             return;
         }
-
         processMoveStatChanges(attackingPokemon, defendingPokemon, pokemonMove, actions);
 
         processMoveStatusEffect(defendingPokemon, pokemonMove, actions, isOwnPokemonAttacking);
@@ -137,6 +157,10 @@ public class TurnActionService {
         if (!canApplyStatusEffect) {
             actions.add(TurnActionFactory.makeTextOnly("The attack missed!"));
             return;
+        }
+
+        if (SLEEP.equals(pokemonMove.getStatusEffect().getCondition())) {
+            defendingPokemon.putPokemonToSleep(calculationService.calculateSleepTurns());
         }
 
         TurnAction.Subject subjectDefendingPokemon = isOwnPokemonAttacking ?  TurnAction.Subject.ENEMY : TurnAction.Subject.OWN;

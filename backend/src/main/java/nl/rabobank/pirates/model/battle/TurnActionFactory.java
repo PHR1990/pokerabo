@@ -2,6 +2,8 @@ package nl.rabobank.pirates.model.battle;
 
 import nl.rabobank.pirates.model.move.StatusEffect;
 
+import static nl.rabobank.pirates.model.move.StatusEffect.Condition.NONE;
+
 public class TurnActionFactory {
 
     static final String WHAT_WILL_POKEMON_DO = "What will %s do?";
@@ -18,6 +20,7 @@ public class TurnActionFactory {
     static final String POKEMON_WAS_BURNED = "%s was burned!";
     static final String POKEMON_WAS_PARALYZED = "%s was paralyzed!";
     static final String POKEMON_IS_ASLEEP = "%s is fast asleep!";
+    static final String POKEMON_WOKE_UP = "%s woke up!";
     static final String POKEMON_IS_FULLY_PARALYZED = "%s is fully paralyzed!";
 
     public static TurnAction makeWhatWillPokemonDo(final String pokemonName) {
@@ -140,7 +143,27 @@ public class TurnActionFactory {
                 .build();
     }
 
+    public static TurnAction makePokemonIsAsleep(String pokemonName) {
 
+        final String message = String.format(POKEMON_IS_ASLEEP, pokemonName.toUpperCase());
+
+        return TurnAction.builder()
+                .text(message)
+                .type(TurnActionType.TEXT_ONLY)
+                .build();
+    }
+
+    public static TurnAction makePokemonWokeUp(String pokemonName, final TurnAction.Subject subject) {
+
+        final String message = String.format(POKEMON_WOKE_UP, pokemonName.toUpperCase());
+
+        return TurnAction.builder()
+                .text(message)
+                .statusEffectCondition(NONE)
+                .subject(subject)
+                .type(TurnActionType.STAT_EFFECT)
+                .build();
+    }
 
     private static String appendableStringFoe(TurnAction.Subject subject) {
         return subject.equals(TurnAction.Subject.ENEMY) ? "Foe " : "";
