@@ -193,7 +193,6 @@ public class GetMoveService {
             return StatusEffect.builder().chance(effectChance).condition(POISON).build();
         }
 
-
         return StatusEffect.builder().chance(effectChance).condition(NONE).build();
     }
     // TODO need to do the same for STATS, moves like bubble-beam and psychic affect status with a chance

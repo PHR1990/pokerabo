@@ -84,7 +84,7 @@ public class GetPokemonService {
                 return statDtoWrapper.getBaseStat();
             }
         }
-        throw new RuntimeException("HP COULDNT BE FOUND ON POKEMON DTO NAME=" + pokemonDto.getName());
+        throw new RuntimeException("HP COULDN'T BE FOUND ON POKEMON DTO NAME=" + pokemonDto.getName());
     }
 
 }

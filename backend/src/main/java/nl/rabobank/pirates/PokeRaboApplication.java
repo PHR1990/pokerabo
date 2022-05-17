@@ -17,7 +17,4 @@ public class PokeRaboApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(PokeRaboApplication.class, args);
 	}
-
-
-
 }

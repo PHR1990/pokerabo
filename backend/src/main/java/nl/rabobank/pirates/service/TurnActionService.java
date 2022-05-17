@@ -7,7 +7,6 @@ import nl.rabobank.pirates.model.common.Stat;
 import nl.rabobank.pirates.model.common.StatChange;
 import nl.rabobank.pirates.model.common.StatMultiplier;
 import nl.rabobank.pirates.model.move.Move;
-import nl.rabobank.pirates.model.move.StatusEffect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,7 +1,5 @@
 package nl.rabobank.pirates.service;
 
-import nl.rabobank.pirates.client.pokemon.PokemonDto;
-import nl.rabobank.pirates.client.pokemon.StatDtoWrapper;
 import nl.rabobank.pirates.model.common.Pokemon;
 import nl.rabobank.pirates.model.common.Stat;
 import nl.rabobank.pirates.model.move.HitTimes;
@@ -61,7 +59,6 @@ public class CalculationService {
         return Math.round((float)Math.floor(
                 0.01 * (2 * baseHpStat * level) + level + 10
         ));
-
     }
 
     public int calculateNumberOfHitTimes(HitTimes hitTimes) {

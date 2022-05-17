@@ -14,5 +14,4 @@ public class SpriteDto {
 
     private URL backDefault;
     private URL frontDefault;
-
 }
