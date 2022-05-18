@@ -1,5 +1,6 @@
 package nl.rabobank.pirates.service;
 
+import lombok.RequiredArgsConstructor;
 import nl.rabobank.pirates.client.PokemonApiRestClient;
 import nl.rabobank.pirates.client.move.EffectDto;
 import nl.rabobank.pirates.model.common.Type;
@@ -26,16 +27,12 @@ import static nl.rabobank.pirates.model.move.StatusEffect.Condition.*;
  * Basically only damage, status buffs/debuffs and accuracy for now.
  */
 @Component
+@RequiredArgsConstructor
 public class GetMoveService {
 
-    @Autowired
-    private CalculationService calculationService;
+    private final PokemonApiRestClient pokemonApiRestClient;
 
-    @Autowired
-    private PokemonApiRestClient pokemonApiRestClient;
-
-    @Autowired
-    private RollService rollService;
+    private final RollService rollService;
 
     private final AtomicInteger counter = new AtomicInteger(0);
 

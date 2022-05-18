@@ -1,6 +1,7 @@
 package nl.rabobank.pirates.service;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import nl.rabobank.pirates.client.PokemonApiRestClient;
 import nl.rabobank.pirates.client.pokemon.PokemonDto;
 import nl.rabobank.pirates.client.pokemon.StatDtoWrapper;
@@ -8,7 +9,6 @@ import nl.rabobank.pirates.model.common.Pokemon;
 import nl.rabobank.pirates.model.common.Stat;
 import nl.rabobank.pirates.model.common.StatAmount;
 import nl.rabobank.pirates.model.common.Type;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
+@RequiredArgsConstructor
 public class GetPokemonService {
 
     private final Map<String, PokemonDto> pokemonStorage = new ConcurrentHashMap<>();
@@ -25,14 +26,11 @@ public class GetPokemonService {
     @Getter
     private final AtomicInteger counter = new AtomicInteger(0);
 
-    @Autowired
-    private PokemonApiRestClient pokemonApiRestClient;
+    private final PokemonApiRestClient pokemonApiRestClient;
 
-    @Autowired
-    private GetMoveService moveService;
+    private final GetMoveService moveService;
 
-    @Autowired
-    private CalculationService calculationService;
+    private final CalculationService calculationService;
 
     public Pokemon getPokemonByName(final String pokemonName, int level) {
         if (level == 0) level = 5;

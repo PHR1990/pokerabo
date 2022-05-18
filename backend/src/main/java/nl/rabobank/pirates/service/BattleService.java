@@ -1,6 +1,7 @@
 package nl.rabobank.pirates.service;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import nl.rabobank.pirates.model.battle.TurnAction;
 import nl.rabobank.pirates.model.battle.TurnActionFactory;
 import nl.rabobank.pirates.model.battle.TurnInformation;
@@ -17,16 +18,14 @@ import static nl.rabobank.pirates.model.move.StatusEffect.Condition.BURN;
 import static nl.rabobank.pirates.model.move.StatusEffect.Condition.POISON;
 
 @Component
+@RequiredArgsConstructor
 public class BattleService {
 
-    @Autowired
-    private GetPokemonService pokemonService;
+    private final GetPokemonService pokemonService;
 
-    @Autowired
-    private TurnInformationService turnInformationService;
+    private final TurnInformationService turnInformationService;
 
-    @Autowired
-    private RollService rollService;
+    private final RollService rollService;
 
     @Getter
     private Pokemon currentOwnPokemon;

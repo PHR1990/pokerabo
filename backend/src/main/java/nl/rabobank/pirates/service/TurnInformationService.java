@@ -1,5 +1,6 @@
 package nl.rabobank.pirates.service;
 
+import lombok.RequiredArgsConstructor;
 import nl.rabobank.pirates.model.battle.TurnAction;
 import nl.rabobank.pirates.model.battle.TurnActionFactory;
 import nl.rabobank.pirates.model.common.Pokemon;
@@ -17,10 +18,10 @@ import static nl.rabobank.pirates.model.move.StatusEffect.Condition.PARALYZED;
 import static nl.rabobank.pirates.model.move.StatusEffect.Condition.SLEEP;
 
 @Component
+@RequiredArgsConstructor
 public class TurnInformationService {
 
-    @Autowired
-    private CalculationService calculationService;
+    private final CalculationService calculationService;
 
     public void processMoveAndAddToActions(final List<TurnAction> actions, Move pokemonMove, Pokemon attackingPokemon, Pokemon defendingPokemon, boolean isOwnPokemonAttacking) {
         // Check if pokemon awakes/freeze
