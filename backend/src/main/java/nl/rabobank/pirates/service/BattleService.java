@@ -23,10 +23,7 @@ public class BattleService {
     private GetPokemonService pokemonService;
 
     @Autowired
-    private TurnActionService turnActionService;
-
-    @Autowired
-    private CalculationService calculationService;
+    private TurnInformationService turnInformationService;
 
     @Autowired
     private RollService rollService;
@@ -51,28 +48,27 @@ public class BattleService {
         boolean ownPokemonGoesFirst = currentOwnPokemon.getStatAmount(Stat.SPEED) > currentEnemyPokemon.getStatAmount(Stat.SPEED);
 
         if (ownPokemonGoesFirst) {
-            turnActionService.processMoveAndAddToActions(actions, ownPokemonMove, currentOwnPokemon, currentEnemyPokemon, true);
+            turnInformationService.processMoveAndAddToActions(actions, ownPokemonMove, currentOwnPokemon, currentEnemyPokemon, true);
             if (currentEnemyPokemon.getCurrentHp() > 0) {
-                turnActionService.processMoveAndAddToActions(actions, enemyPokemonMove, currentEnemyPokemon, currentOwnPokemon, false);
+                turnInformationService.processMoveAndAddToActions(actions, enemyPokemonMove, currentEnemyPokemon, currentOwnPokemon, false);
             }
         } else {
-            turnActionService.processMoveAndAddToActions(actions, enemyPokemonMove, currentEnemyPokemon, currentOwnPokemon, false);
+            turnInformationService.processMoveAndAddToActions(actions, enemyPokemonMove, currentEnemyPokemon, currentOwnPokemon, false);
             if (currentOwnPokemon.getCurrentHp() > 0) {
-                turnActionService.processMoveAndAddToActions(actions, ownPokemonMove, currentOwnPokemon, currentEnemyPokemon, true);
+                turnInformationService.processMoveAndAddToActions(actions, ownPokemonMove, currentOwnPokemon, currentEnemyPokemon, true);
             }
-
         }
 
         if (areBothPokemonStillAlive()) {
 
             applyBurnOrPoison(currentEnemyPokemon, actions);
             // Apply seeding
-            turnActionService.checkIfDefendingPokemonFaintedAndProcessFainting(currentEnemyPokemon, false, actions);
+            turnInformationService.checkIfDefendingPokemonFaintedAndAddFaintingToActions(currentEnemyPokemon, false, actions);
         }
         if (areBothPokemonStillAlive()) {
             applyBurnOrPoison(currentOwnPokemon, actions);
             // Apply seeding
-            turnActionService.checkIfDefendingPokemonFaintedAndProcessFainting(currentOwnPokemon, true, actions);
+            turnInformationService.checkIfDefendingPokemonFaintedAndAddFaintingToActions(currentOwnPokemon, true, actions);
         }
 
         if (areBothPokemonStillAlive()) {

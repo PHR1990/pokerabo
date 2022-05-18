@@ -8,7 +8,6 @@ import nl.rabobank.pirates.model.move.StatusEffect;
 @Builder(toBuilder = true, access = AccessLevel.PACKAGE)
 @Getter
 public class TurnAction {
-    // TODO add length?
     private TurnActionType type;
     private StatusEffect.Condition statusEffectCondition;
     private int damage;
