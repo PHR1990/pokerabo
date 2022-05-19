@@ -22,6 +22,9 @@ public class TurnActionFactory {
     static final String POKEMON_IS_ASLEEP = "%s is fast asleep!";
     static final String POKEMON_WOKE_UP = "%s woke up!";
     static final String POKEMON_IS_FULLY_PARALYZED = "%s is fully paralyzed!";
+    static final String POKEMON_IS_CONFUSED = "%s is confused!";
+    static final String POKEMON_HURT_ITSELF_IN_CONFUSION = "It hurt itself in its confusion!";
+    static final String POKEMON_IS_NO_LONGER_CONFUSED = "%s snapped out of its confusion!";
 
     public static TurnAction makeWhatWillPokemonDo(final String pokemonName) {
         return TurnAction.builder()
@@ -119,6 +122,9 @@ public class TurnActionFactory {
         if (statusEffectCondition.equals(StatusEffect.Condition.SLEEP)) {
             turnAction = turnAction.toBuilder().text(String.format(POKEMON_IS_ASLEEP, pokemonName)).build();
         }
+        if (statusEffectCondition.equals(StatusEffect.Condition.CONFUSED)) {
+            turnAction = turnAction.toBuilder().text(String.format(POKEMON_IS_CONFUSED, pokemonName)).build();
+        }
         return turnAction;
     }
 
@@ -143,13 +149,25 @@ public class TurnActionFactory {
                 .build();
     }
 
-    public static TurnAction makePokemonIsAsleep(String pokemonName) {
+    public static TurnAction makePokemonIsStillAsleep(String pokemonName) {
 
         final String message = String.format(POKEMON_IS_ASLEEP, pokemonName.toUpperCase());
 
         return TurnAction.builder()
                 .text(message)
                 .type(TurnActionType.TEXT_ONLY)
+                .build();
+    }
+
+    public static TurnAction makePokemonHurtItselfInConfusion(final int damage, final TurnAction.Subject subject) {
+
+        final String message = String.format(POKEMON_HURT_ITSELF_IN_CONFUSION);
+
+        return TurnAction.builder()
+                .text(message)
+                .subject(subject)
+                .type(TurnActionType.DAMAGE_ANIMATION)
+                .damage(damage)
                 .build();
     }
 
@@ -164,6 +182,18 @@ public class TurnActionFactory {
                 .type(TurnActionType.STAT_EFFECT)
                 .build();
     }
+
+    public static TurnAction makePokemonSnappedOutOfConfusion(String pokemonName) {
+
+        final String message = String.format(POKEMON_IS_NO_LONGER_CONFUSED, pokemonName.toUpperCase());
+
+        return TurnAction.builder()
+                .text(message)
+                .type(TurnActionType.TEXT_ONLY)
+                .build();
+    }
+
+
 
     private static String appendableStringFoe(TurnAction.Subject subject) {
         return subject.equals(TurnAction.Subject.ENEMY) ? "Foe " : "";

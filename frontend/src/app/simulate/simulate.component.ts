@@ -21,8 +21,8 @@ export class SimulateComponent implements OnInit, OnDestroy {
   private possiblePokemon = [
     'charmander', 'squirtle', 'pikachu', 'pidgey', 'mankey', 'beedrill','butterfree',
     'charmeleon', 'wartortle', 'raichu', 'jolteon', 'flareon','sandschrew', 'sandslash','cubone','marowak',
-    'vaporeon', 'kadabra', 'hitmonchan', 'hitmonlee', 'graveler', 'golem',
-    'primeape', 'blastoise', 'charizard', "gyarados", "nidorino", "nidoqueen", "nidoran-m", "nidoran-f", "clefairy"
+    'vaporeon', 'kadabra', 'hitmonchan', 'hitmonlee', 'golem',
+    'primeape', 'blastoise', 'charizard', "gyarados", "nidoking", "nidoqueen","clefairy", "zubat", "golbat"
   ];
 
   ownPokemonLevel = 5;

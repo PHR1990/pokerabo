@@ -48,12 +48,12 @@ public class BattleService {
 
         if (ownPokemonGoesFirst) {
             turnInformationService.processMoveAndAddToActions(actions, ownPokemonMove, currentOwnPokemon, currentEnemyPokemon, true);
-            if (currentEnemyPokemon.getCurrentHp() > 0) {
+            if (areBothPokemonStillAlive()) {
                 turnInformationService.processMoveAndAddToActions(actions, enemyPokemonMove, currentEnemyPokemon, currentOwnPokemon, false);
             }
         } else {
             turnInformationService.processMoveAndAddToActions(actions, enemyPokemonMove, currentEnemyPokemon, currentOwnPokemon, false);
-            if (currentOwnPokemon.getCurrentHp() > 0) {
+            if (areBothPokemonStillAlive()) {
                 turnInformationService.processMoveAndAddToActions(actions, ownPokemonMove, currentOwnPokemon, currentEnemyPokemon, true);
             }
         }

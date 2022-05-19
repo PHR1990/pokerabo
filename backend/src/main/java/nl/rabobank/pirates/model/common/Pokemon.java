@@ -10,8 +10,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static nl.rabobank.pirates.model.move.StatusEffect.Condition.PARALYZED;
-import static nl.rabobank.pirates.model.move.StatusEffect.Condition.SLEEP;
+import static nl.rabobank.pirates.model.move.StatusEffect.Condition.*;
 
 @Getter
 @Builder
@@ -40,6 +39,8 @@ public class Pokemon {
     private List<StatusEffect.Condition> statusEffectConditions;
 
     private int sleepCounter;
+
+    private int confusionCounter;
 
     public void dealDamage(int damage) {
         currentHp-=damage;
@@ -118,9 +119,24 @@ public class Pokemon {
         return statusEffectConditions.add(condition);
     }
 
+    public void confusePokemon(int turnsConfused) {
+        addStatusEffect(CONFUSED);
+        confusionCounter = turnsConfused;
+    }
+
     public void putPokemonToSleep(int turnsAsleep) {
         addStatusEffect(SLEEP);
         sleepCounter = turnsAsleep;
+    }
+
+    public int decrementConfusionCounterAndReturn() {
+        if (confusionCounter > 0){
+            confusionCounter--;
+        }
+        if (confusionCounter == 0) {
+            statusEffectConditions.remove(CONFUSED);
+        }
+        return confusionCounter;
     }
 
     public int decrementSleepCounterAndReturn() {
@@ -130,8 +146,6 @@ public class Pokemon {
         if (sleepCounter == 0) {
             statusEffectConditions.remove(SLEEP);
         }
-
-
         return sleepCounter;
     }
 

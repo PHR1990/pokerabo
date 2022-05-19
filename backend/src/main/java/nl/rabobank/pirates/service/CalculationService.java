@@ -1,6 +1,5 @@
 package nl.rabobank.pirates.service;
 
-import lombok.RequiredArgsConstructor;
 import nl.rabobank.pirates.model.common.Pokemon;
 import nl.rabobank.pirates.model.common.Stat;
 import nl.rabobank.pirates.model.move.HitTimes;
@@ -77,7 +76,7 @@ public class CalculationService {
         return 1;
     }
 
-    public int calculateSleepTurns() {
+    public int randomSleepOrConfusedTurns() {
         return rollService.getRandomValue(2,6);
     }
 }

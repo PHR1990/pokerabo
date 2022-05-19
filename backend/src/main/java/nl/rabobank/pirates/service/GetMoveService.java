@@ -183,12 +183,22 @@ public class GetMoveService {
         if (effectDto.getEffect().toLowerCase().contains("paralyzes the target")) {
             return StatusEffect.builder().chance(effectChance).condition(PARALYZED).build();
         }
+        if (effectDto.getEffect().toLowerCase().contains("confuses the target.")) {
+            return StatusEffect.builder().chance(effectChance).condition(CONFUSED).build();
+        }
         if (effectDto.getEffect().toLowerCase().contains("has a $effect_chance% chance to burn the target.")) {
             return StatusEffect.builder().chance(effectChance).condition(BURN).build();
         }
         if (effectDto.getEffect().toLowerCase().contains("has a $effect_chance% chance to poison the target.")) {
             return StatusEffect.builder().chance(effectChance).condition(POISON).build();
         }
+        if (effectDto.getEffect().toLowerCase().contains("has a $effect_chance% chance to confuse the target.")) {
+            return StatusEffect.builder().chance(effectChance).condition(CONFUSED).build();
+        }
+        if (effectDto.getEffect().toLowerCase().contains("Has a $effect_chance% chance to freeze the target")) {
+            return StatusEffect.builder().chance(effectChance).condition(FROZEN).build();
+        }
+
 
         return StatusEffect.builder().chance(effectChance).condition(NONE).build();
     }

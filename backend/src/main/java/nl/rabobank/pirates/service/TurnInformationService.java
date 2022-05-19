@@ -8,14 +8,12 @@ import nl.rabobank.pirates.model.common.Stat;
 import nl.rabobank.pirates.model.common.StatChange;
 import nl.rabobank.pirates.model.common.StatMultiplier;
 import nl.rabobank.pirates.model.move.Move;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 import static nl.rabobank.pirates.model.battle.TurnActionFactory.makeFaintAnimation;
-import static nl.rabobank.pirates.model.move.StatusEffect.Condition.PARALYZED;
-import static nl.rabobank.pirates.model.move.StatusEffect.Condition.SLEEP;
+import static nl.rabobank.pirates.model.move.StatusEffect.Condition.*;
 
 @Component
 @RequiredArgsConstructor
@@ -32,7 +30,9 @@ public class TurnInformationService {
         if (!checkIfPokemonIsAsleepAndDecrementCounterAndAddAction(attackingPokemon, actions, isOwnPokemonAttacking)) {
             return;
         }
-
+        if (!checkIfPokemonIsConfusedAndDecrementCounterAndAddAction(attackingPokemon, actions, isOwnPokemonAttacking)) {
+            return;
+        }
         switch (pokemonMove.getDamageClass()) {
             case SPECIAL -> {
                 int damage = calculationService.calculateSpecialDamage(attackingPokemon, defendingPokemon, pokemonMove);
@@ -117,6 +117,7 @@ public class TurnInformationService {
         if (pokemonMove.getStatusEffect() == null) {
             return;
         }
+
         boolean isSuccessful = calculationService.isRollSuccessful(pokemonMove.getStatusEffect().getChance());
         if (!isSuccessful) {
             return;
@@ -128,15 +129,15 @@ public class TurnInformationService {
             actions.add(TurnActionFactory.makeTextOnly("The attack missed!"));
             return;
         }
-
         if (SLEEP.equals(pokemonMove.getStatusEffect().getCondition())) {
-            defendingPokemon.putPokemonToSleep(calculationService.calculateSleepTurns());
+            defendingPokemon.putPokemonToSleep(calculationService.randomSleepOrConfusedTurns());
         }
-
+        if (CONFUSED.equals(pokemonMove.getStatusEffect().getCondition())) {
+            defendingPokemon.confusePokemon(calculationService.randomSleepOrConfusedTurns());
+        }
         TurnAction.Subject subjectDefendingPokemon = isOwnPokemonAttacking ?  TurnAction.Subject.ENEMY : TurnAction.Subject.OWN;
 
-        actions.add(TurnActionFactory.makeStatusEffect(defendingPokemon.getName(), defendingPokemon.getStatusEffectConditions().get(0), subjectDefendingPokemon));
-
+        actions.add(TurnActionFactory.makeStatusEffect(defendingPokemon.getName(), pokemonMove.getStatusEffect().getCondition(), subjectDefendingPokemon));
     }
 
     private void checkNumberOfHitsAndProcessNumberOfHitsAndAddAction(final Move pokemonMove, final Pokemon defendingPokemon, final boolean isOwnPokemonAttacking, final int damage, final List<TurnAction> actions) {
@@ -169,10 +170,43 @@ public class TurnInformationService {
         return true;
     }
 
+    private boolean checkIfPokemonIsConfusedAndDecrementCounterAndAddAction(final Pokemon attackingPokemon, final List<TurnAction> actions, boolean isOwnPokemonAttacking) {
+        if (attackingPokemon.isPokemonAfflictedBy(CONFUSED)) {
+
+            if (attackingPokemon.decrementConfusionCounterAndReturn() > 0) {
+                boolean cantAttack = calculationService.isRollSuccessful(50);
+
+                if (cantAttack) {
+                    int confusionDamage = calculationService.calculateDamage(attackingPokemon.getLevel(), 40,
+                            attackingPokemon.getStatAmount(Stat.ATTACK),
+                            attackingPokemon.getStatAmount(Stat.DEFENSE));
+
+                    attackingPokemon.dealDamage(confusionDamage);
+
+                    TurnAction.Subject subjectAttackingPokemon =
+                            isOwnPokemonAttacking ?
+                                    TurnAction.Subject.OWN:
+                                    TurnAction.Subject.ENEMY;
+
+                    actions.add(TurnActionFactory.makePokemonHurtItselfInConfusion(confusionDamage, subjectAttackingPokemon));
+
+                    checkIfDefendingPokemonFaintedAndAddFaintingToActions(attackingPokemon, isOwnPokemonAttacking, actions);
+
+                    return false;
+                }
+            } else {
+                actions.add(TurnActionFactory.makePokemonSnappedOutOfConfusion(attackingPokemon.getName()));
+            }
+        }
+        return true;
+    }
+
+
+
     private boolean checkIfPokemonIsAsleepAndDecrementCounterAndAddAction(final Pokemon attackingPokemon, final List<TurnAction> actions, boolean isOwnPokemonAttacking) {
         if (attackingPokemon.isPokemonAfflictedBy(SLEEP)) {
             if (attackingPokemon.decrementSleepCounterAndReturn() > 0) {
-                actions.add(TurnActionFactory.makePokemonIsAsleep(attackingPokemon.getName()));
+                actions.add(TurnActionFactory.makePokemonIsStillAsleep(attackingPokemon.getName()));
                 return false;
             }
 

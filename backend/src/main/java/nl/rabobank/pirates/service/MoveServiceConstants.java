@@ -16,7 +16,6 @@ public interface MoveServiceConstants {
             "clamp",
             "bind",
             "bide",         // Very niche, no reason to implement
-            "confure-ray",  // Just requires confusion
             "disable",      // Annoying to implement
             "dream-eater",  // Needs sleep
             "explosion",    // A bit useless in a simulation
