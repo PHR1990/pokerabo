@@ -40,13 +40,13 @@ Notice that calculations, move effects and several other things were not impleme
 
 ## Assignment Requirements
 ### Backend
-- Refactor class 'TurnActionService'
+- Refactor class 'TurnInformationService'
   - Make sure that no existing business logic is broken
   - Adding unit tests might be an idea to help during this process
   - Make it more readable
   - Decouple when possible to make it cleaner and more cohesive
   - Note: We are aware that not everything can be refactored in this timeframe, so, refactoring + commenting other subjects is a good idea.
-- Code review class 'MoveService' (you may still comment on other places that are relevant)
+- Code review class 'GetMoveService' (you may still comment on other places that are relevant)
   - Code smells, confusing code, improper ways, etc.
 - Implement features
    - Implement the code based on unit tests that aren't passing (Smoke tests SHOULD NOT be broken when this project is running properly the first time)
