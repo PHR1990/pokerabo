@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild, ElementRef} from '@angular/core';
 import {PokemonService} from '../pokemon.service';
 import {Condition, Pokemon, StatusEffect, Subject, TurnActionType, TurnInformation} from './pokemon.interface';
 import {forkJoin} from 'rxjs';
@@ -38,6 +38,8 @@ export class SimulateComponent implements OnInit, OnDestroy {
   text;
 
   messagesLeftToDisplay = 0;
+  
+  @ViewChild('nextturnbtn') nextTurnButton;
 
   constructor(private pokemonService: PokemonService) { }
   ngOnInit(): void {
@@ -57,24 +59,28 @@ export class SimulateComponent implements OnInit, OnDestroy {
     });
   }
   executeTurn(): void {
+	  
     if (this.restartBattle) {
-      this.restartBattle = false;
-      this.ownPokemonStatusEffect = '';
-      this.enemyPokemonStatusEffect = '';
+      this.resetBattleVars();
       this.selectPokemonAndStartBattle();
       return;
     }
+	
+	//the below if statement currently prevents users starting a new turn before all the previous moves have been executed
     if (this.messagesLeftToDisplay === 0) {
-      this.pokemonService.executeTurn().then(res => {
-        this.turnInformation = res;
-        this.animateTurnAndDisplayTexts();
-      });
+		this.disableNextTurnButton();
+		
+		  this.pokemonService.executeTurn().then(res => {
+			this.turnInformation = res;
+			this.animateTurnAndDisplayTexts();
+		  });
     }
   }
   animateTurnAndDisplayTexts(): void {
+	  
     // Create A unit test for this. How can he guarantee that the butotn is only pressed once for every batch
     let timeMultiplier = 1;
-
+	
     this.messagesLeftToDisplay = this.turnInformation.actions.length;
     const that = this;
     this.turnInformation.actions.forEach(action => {
@@ -83,6 +89,9 @@ export class SimulateComponent implements OnInit, OnDestroy {
 
       setTimeout(() => {
         that.messagesLeftToDisplay--;
+		
+		console.log('Handling action', action)
+		
         if (action.type === TurnActionType.TEXT_ONLY) {
 
         } else if (action.type === TurnActionType.DAMAGE_ANIMATION) {
@@ -103,6 +112,11 @@ export class SimulateComponent implements OnInit, OnDestroy {
         if (action.text && action.text.length > 0) {
           this.text = action.text;
         }
+		
+		//enable the 'next turn' button when no more actions are left
+		if(that.messagesLeftToDisplay === 0) {
+			this.enableNextTurnButton();
+		}
       }, timeMultiplier * 750);
     });
   }
@@ -135,7 +149,21 @@ export class SimulateComponent implements OnInit, OnDestroy {
     } else {
       this.enemyPokemonStatusEffect = text;
     }
-
+  }
+  disableNextTurnButton() {
+	  if(this.nextTurnButton != null) { 
+		this.nextTurnButton.disabled = true;
+	  }
+  }
+  enableNextTurnButton() {
+	  if(this.nextTurnButton != null) {
+		 this.nextTurnButton.disabled = false;
+	  }
+  }
+  resetBattleVars() {
+	  this.restartBattle = false;
+      this.ownPokemonStatusEffect = '';
+      this.enemyPokemonStatusEffect = '';
   }
   updateEnemyPokemonHp(): Promise<void> {
     return this.pokemonService.getEnemyPokemon().then(pokeRes => {
