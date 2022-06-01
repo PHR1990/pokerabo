@@ -1,6 +1,7 @@
 package nl.rabobank.pirates.service;
 
-import org.junit.Ignore;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
@@ -8,11 +9,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import nl.rabobank.pirates.smoke.TestConfig;
 
 @ExtendWith(MockitoExtension.class)
 @RunWith(MockitoJUnitRunner.class)
+@SpringBootTest(classes = TestConfig.class)
 class CalculationServiceTest {
 
     @Mock
@@ -21,18 +24,17 @@ class CalculationServiceTest {
     @InjectMocks
     private CalculationService sut;
 
-    @Ignore("Needs to be implemented")
     @Test
     public void when_pokemon_is_same_type_as_move_include_stab() {
 
-        int damage = sut.calculateDamage(15, 40, 23, 15);
+        int damage = sut.calculateDamage(15, 40, 23, 15, true);
 
         assertThat(damage).isBetween(16, 17);
     }
     @Test
     public void pokemon_is_not_same_type_as_move_dont_include_stab() {
 
-        int damage = sut.calculateDamage(15, 40, 20, 17);
+        int damage = sut.calculateDamage(15, 40, 20, 17, false);
 
         assertThat(damage).isEqualTo(9);
     }

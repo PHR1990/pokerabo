@@ -28,7 +28,8 @@ public class CalculationService {
                 attackingPokemon.getLevel(),
                 move.getPower(),
                 attackingPokemon.getStatAmount(Stat.SPECIAL_ATTACK),
-                defendingPokemon.getStatAmount(Stat.SPECIAL_DEFENSE)
+                defendingPokemon.getStatAmount(Stat.SPECIAL_DEFENSE),
+                attackingPokemon.getType().equals(move.getType())
         );
     }
 
@@ -37,12 +38,17 @@ public class CalculationService {
                 attackingPokemon.getLevel(),
                 move.getPower(),
                 attackingPokemon.getStatAmount(Stat.ATTACK),
-                defendingPokemon.getStatAmount(Stat.DEFENSE)
+                defendingPokemon.getStatAmount(Stat.DEFENSE),
+                attackingPokemon.getType().equals(move.getType())
         );
     }
 
-    int calculateDamage(int level, int movePower, int attack, int defense) {
+    int calculateDamage(int level, int movePower, int attack, int defense, boolean applySTAB) {
         if (movePower == 0) return 0;
+        
+        //STAB (an abbreviated form of Same-type attack bonus) amplifies a move's power when a Pokémon's type matches the move's type. This boost in power is increased by 50%
+    	//Source: https://pokemon.fandom.com/wiki/STAB
+        if (applySTAB) movePower *= 1.5;
 
         return Math.round(
                 ((((level * 2)/5 + 2) * movePower * attack/defense)/50) + 2);

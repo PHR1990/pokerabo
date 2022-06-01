@@ -76,15 +76,14 @@
 
     <!-- Simulate next turn -->
     <div *ngIf="!restartBattle" class="next-turn-button">
-      <button mat-raised-button
+      <button #nextturnbtn mat-raised-button
       (click)="executeTurn()">
         <span >next turn</span>
       </button>
     </div>
     <div *ngIf="restartBattle"class="refresh-button">
-      <button mat-raised-button
+      <button #refreshbtn mat-raised-button
               (click)="executeTurn()">
-
         <span>refresh</span>
       </button>
     </div>

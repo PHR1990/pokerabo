@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static nl.rabobank.pirates.model.move.StatusEffect.Condition.BURN;
 import static nl.rabobank.pirates.model.move.StatusEffect.Condition.POISON;
@@ -32,11 +34,15 @@ public class BattleService {
 
     @Getter
     private Pokemon currentEnemyPokemon;
+    
+    private AtomicInteger counter = new AtomicInteger(0);
 
     public TurnInformation executeTurn() {
         if (currentOwnPokemon == null || currentEnemyPokemon == null) return null;
 
         List<TurnAction> actions = new ArrayList<>();
+        
+        System.out.println("Calls to battleService: " + counter.incrementAndGet());
         
         int ownPokemonMoveIndex = rollService.getRandomValue(0, currentOwnPokemon.getMoves().size());
         int enemyPokemonMoveIndex = rollService.getRandomValue(0, currentEnemyPokemon.getMoves().size());
@@ -74,7 +80,16 @@ public class BattleService {
 
             actions.add(TurnActionFactory.makeWhatWillPokemonDo(currentOwnPokemon.getName()));
         }
-
+        
+        //TODO: once adding of actions has been properly refactored (see TurnInformationService) this can be removed
+        actions.removeIf(Objects::isNull);
+        
+        //Below is used for debugging purposes and would not be part of PR
+        System.out.println("Number of actions: " + actions.size());
+        for (TurnAction turnAction : actions) {
+        	System.out.println(turnAction);
+		}
+        
         return TurnInformation.builder().actions(actions).build();
     }
 
